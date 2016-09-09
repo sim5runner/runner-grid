@@ -1,0 +1,48 @@
+{
+  "applications": [
+     {
+        "label": "Word",
+        "key": "word"
+      },
+      {
+        "label": "Access",
+        "key": "access"
+      },
+      {
+        "label": "PPT",
+        "key": "ppt"
+      },
+      {
+        "label": "Excel",
+        "key": "excel"
+      }
+    ],
+    "scenarios": [
+		"T1",
+		"A1"
+    ],
+    "templateOptions": [
+      {
+        "label": "Blank",
+        "key": "blank"
+      },
+      {
+        "label": "Baloo (Pre-filled)",
+        "key": "baloo"
+      },
+      {
+        "label": "Copy from Existing Task",
+        "key": "task"
+      }
+    ],
+    "methodtypelist": [
+		"Ribbon",
+		"Keyboard",
+		"Toolbar",
+		"Mouse",
+		"Shortcut Menu",
+		"Other",
+		"Menu",
+		"Right Click"
+    ]
+}

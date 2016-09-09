@@ -1,0 +1,103 @@
+@import "variable";
+
+//* {
+//  font-size: 100%;
+//  font-family: Arial;
+//}
+
+html {
+  overflow-x: scroll;
+  min-width: 1280px
+}
+
+#account {
+  background: #2f4050;
+}
+
+.control-label {
+  font-size: 16px;
+}
+
+#application-title {
+  font-size: 26px;
+  margin: 10px 15px;
+  font-family: inherit;
+  line-height: 46px;
+}
+
+.primary-modal {
+  .modal-header {
+    background-color: rgb(238,252,255) !important;
+    color: #121212 !important;
+    font-weight: 800;
+    font-size: 18px;
+
+    i {
+      font-size: 21px;
+    }
+
+    .close {
+      opacity: 1;
+    }
+  }
+
+  .modal-footer {
+    background-color: rgb(197,228,235) !important;
+    height: 60px;
+    padding: 4px;
+
+    .m-r-8 {
+      width: 70px;
+      height: 40px;
+      padding: 1px;
+    }
+
+    .m-r-20 {
+      width: 70px;
+      height: 40px;
+      padding: 5px;
+    }
+    .cancel  {
+      width: 70px;
+    }
+  }
+
+  .modal-body {
+    height: 190px;
+  }
+}
+
+.error-modal {
+  .modal-header {
+      background-color: #C9625F !important;
+      color: #fff !important;
+  }
+}
+
+.largeWidth {
+  width: 100%;
+}
+
+.smallWidth {
+  width: 49%;
+}
+
+.inlineBlock {
+  display: inline-block;
+}
+
+.toggle-animate.ng-show-add, .toggle-animate.ng-show-remove {
+  -webkit-transition:all linear 1s;
+  -moz-transition:all linear 1s;
+  -o-transition:all linear 1s;
+  transition:all linear 1s;
+  display:block!important;
+}
+.toggle-animate.ng-show-add.ng-show-add-active,
+.toggle-animate.ng-show-remove {
+  opacity:0;
+}
+.toggle-animate.ng-show-add,
+.toggle-animate.ng-show-remove.ng-show-remove-active {
+  opacity:1;
+}
