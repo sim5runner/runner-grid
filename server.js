@@ -1,38 +1,36 @@
+/**
+ * Created by AbhishekK
+ */
+
 'use strict';
 
-/* dependencies */
+/**
+ * dependencies
+ */
 const express = require('express');
 const exphbs = require('express-handlebars');
 const expressValidator = require('express-validator');
 const compress = require('compression');
 const bodyParser = require('body-parser');
 const path = require('path');
-const cookieParser = require('cookie-parser');
 
-// Error Handler
-
-// Logger
+/**
+ * @type {Logger|exports}
+ */
 const bunyan = require("bunyan");
 const bunyanformat = require('bunyan-format');
 const formatOut = bunyanformat({ outputMode: 'short' });
 const logger = bunyan.createLogger({name: 'RunnerGrid', stream: formatOut, level: 'info' });
 
-//config
+/**
+ * @type {App|exports}
+ */
 const config = require("./server/config");
-var routes   = require('./server/routes/app.server.routes');
-
-//session config
-const session  = require('express-session');
-const passport = require('passport');
-/* Database connect */
-var mongoose = require("mongoose");
-
-//Express
 let app = express();
-/// passport config
-require('./server/config/passport')(passport);
 
-//-----------Express Middlewares-------------------
+/**
+ * Middlewares
+ */
 // 1. HTTP CACHE HEADERS
 app.use(function(req, res, next) {
 
@@ -51,8 +49,6 @@ app.use(compress());
 //Default location of Express Views - used in development mode
 let viewsPath = path.join(__dirname, '.tmp', 'views');
 
-//process.env.NODE_ENV='development';
-
 //Environment setup production / development
 if (process.env.NODE_ENV === 'production') {
     // Override Views location to dist folder
@@ -65,12 +61,15 @@ if (process.env.NODE_ENV === 'production') {
     app.use(express.static(__dirname + '/app/'));
     app.set('views', viewsPath);
 }
+
 // 3.Support for  json encoded bodies
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
 
-//-----------Express WWW Server-------------------
+/**
+ * Express WWW Server
+ */
 let port = process.env.PORT || 8080;
 // Serve Bower Components based JS & CSS & Image assets
 app.use("/bower_components", express.static(__dirname + '/bower_components'));
@@ -83,59 +82,25 @@ app.engine('.hbs', exphbs({
     extname: '.hbs'
 }));
 app.set('view engine', '.hbs');
-// CookieParser should be above session
-app.use(cookieParser());
 
-// required for passport
-app.use(session({
-    secret: 'runner-v2',
-    resave: true,
-    key: 'runner.sid',
-    saveUninitialized: true,
-    cookie: {maxAge: (60000 * 60 * 24)}
-} )); // session secret
+/**
+ * Middleware imports
+ */
+require("./server/routes")(app, config);
+require("./server/middleware/mongoose")(app, config);
 
-app.use(passport.initialize());
-app.use(passport.session()); // persistent login sessions
-
-// Define a prefix for all routes
-app.use('/', routes.webrouter);
-
-app.all('*',function(req,res,next){
-    if(req.isAuthenticated()){
-        next();
-    }else{
-        //next(new Error(401)); // 401 Not Authorized
-        res.redirect('/');
-    }
-});
-
-app.use('/api', routes.apirouter);
-
-//-----------Connecting Mongo ------------------- // todo: synchronize mongo connection with app listen
-try{
-    let mongoURL = config.mongo.prefix  + config.mongo.username + ":" + config.mongo.password + "@" + config.mongo.dbURL;
-    mongoose.connect(mongoURL);
-
-    let conn = mongoose.connection;
-    conn.on('error', console.error.bind(console, 'Mongo connection error:'));
-
-    conn.once('open', function() {
-        console.log('Mongo Connection Successful');
-    });
-}catch(er){
-    console.log("Mongo error" + er);
-}
-
-// error handling
+/**
+ * Error handling
+ */
 app.use(function(err, req, res, next){
     logger.error(err);
     res.status(err.status)
         .send(err);
-
 });
 
-//-----------Start listening -------------------
+/**
+ * Start listening
+ */
 app.listen(port, function() {
     logger.info('Your Automation App is running on http://localhost:' + port);
     logger.info('Environment is set to ' + (process.env.NODE_ENV || 'development'));

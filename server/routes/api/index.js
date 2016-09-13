@@ -1,6 +1,12 @@
+/**
+ * Created by AbhishekK
+ */
+
+'use strict';
+
 // Get the router
 var apirouter = require('express').Router();
-var xpathController = require('../../controllers/xpath.server.controller');
+var userData = require('../../controllers/userdata.server.controller.js');
 
 // Middleware for all this apirouters requests
 apirouter.use(function timeLog(req, res, next) {
@@ -17,28 +23,20 @@ apirouter.get('/', function(req, res) {
     res.end();
 });
 
-/**
- * api for xpath functionality
- *
- * xpath are unique at application level, different applications can have xpath with same key
- * user is restricted to update / delete key of existing xpath
- * user is able to update value of xpath with notification on basis of taskid tags
- */
+// add data: error on existing data key for user
+apirouter.post('/data', userData.addData);
 
-// add xpath: error on existing xpath key for app
-apirouter.post('/xpaths', xpathController.addXpath);
+// get all data for a user
+apirouter.get('/data', userData.getData);
 
-// get all xpath
-apirouter.get('/xpaths', xpathController.getXpaths);
+// get data for user
+apirouter.get('/data/:userid', userData.getUserData);
 
-// get xpath for app_type
-apirouter.get('/xpaths/:app_type', xpathController.getApplicationXpaths);
+// update data
+apirouter.put('/data/:data_key', userData.updateData);
 
-// get xpath: by key + app_type
-apirouter.get('/xpaths/:app_type/:xpath_key', xpathController.getApplicationXpathValue);
-
-// update xpath: update xpath value + add task_id tag (no duplicates)
-apirouter.put('/xpaths/:app_type/:xpath_key', xpathController.updateApplicationXpath);
+// update data: update data for user
+apirouter.put('/data/:userid/:data_key', userData.updateUserData);
 
 module.exports = apirouter;
 

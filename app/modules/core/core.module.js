@@ -1,13 +1,13 @@
+/**
+ * Created by AbhishekK
+ */
+
 (function() {
   'use strict';
 
-  var module = angular.module('automationApp.core', [
+  var module = angular.module('app.core', [
     'ui.router',
-	'ngAnimate',
-    'ngCookies',
     'ngResource',
-    'ngSanitize',
-    'ngTouch',
     'ui.bootstrap'
   ]);
 
@@ -26,7 +26,7 @@
 	  
 	  $urlRouterProvider.otherwise(function ($injector) {
           var $state = $injector.get('$state');
-          $state.go('app.task-new');
+          $state.go('app.dashboard');
       });
   }
 })();
