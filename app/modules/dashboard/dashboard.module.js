@@ -4,7 +4,7 @@
   var module = angular.module('app.dashboard', [
     'ui.router',
     'ngResource',
-    'ui.bootstrap'
+    'ui.bootstrap',
   ]);
 
   module.config(appConfig);

@@ -15,11 +15,9 @@ exports.getData = function (req, res) {
 };
 
 exports.getUserData = function (req, res) {
-    res.json({});
-};
-
-exports.updateData = function (req, res) {
-    res.json({});
+    res.json({"data_key": req.param.data_key,
+        "data_value": "test value"
+    });
 };
 
 exports.updateUserData = function (req, res) {

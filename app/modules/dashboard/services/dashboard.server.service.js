@@ -1,7 +1,3 @@
-/**
- * Created by AbhishekK
- */
-
 'use strict';
 
 angular.module('app.dashboard')

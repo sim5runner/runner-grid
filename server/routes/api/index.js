@@ -30,13 +30,13 @@ apirouter.post('/data', userData.addData);
 apirouter.get('/data', userData.getData);
 
 // get data for user
-apirouter.get('/data/:userid', userData.getUserData);
+apirouter.get('/data/:user_id', userData.getUserData);
 
-// update data
-apirouter.put('/data/:data_key', userData.updateData);
+// get data for user
+apirouter.get('/data/:user_id/:data_key', userData.getUserData);
 
 // update data: update data for user
-apirouter.put('/data/:userid/:data_key', userData.updateUserData);
+apirouter.put('/data/:user_id/:data_key', userData.updateUserData);
 
 module.exports = apirouter;
 
