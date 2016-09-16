@@ -3,9 +3,6 @@
  */
 'use strict';
 
-const router = require('express').Router();
-var userData = require('../controllers/userdata.server.controller');
-
 exports.addData = function (req, res) {
     res.json({});
 };

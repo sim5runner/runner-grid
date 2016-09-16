@@ -22,6 +22,7 @@ var options = {
 
         css_dev: [
             './.tmp/css/*.css',
+            './.tmp/css/**/*.css'
         ],
         css_dev_lazy: [],
 

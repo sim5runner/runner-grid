@@ -10,4 +10,10 @@ bower_components
 # Temporary development directory
 dist
 
+# LIB Blob files
+lib/*
+!lib/libhelper
+lib/jf/*
+!lib/jf/jfhelper
+
 todo.txt
