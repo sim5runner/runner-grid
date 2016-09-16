@@ -34,7 +34,6 @@
     "gulp-jshint": "~1.9.0",
     "gulp-load-plugins": "^0.10.0",
     "gulp-minify-html": "^0.1.7",
-    "gulp-ng-annotate": "~0.5.2",
     "gulp-nodemon": "^2.0.4",
     "gulp-rename": "~1.2.0",
     "gulp-replace": "~0.5.0",

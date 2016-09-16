@@ -11,40 +11,25 @@ var options = {
     dist: 'dist',
     tmp: '.tmp',
     paths : {
-        less: ['./app/css/**/*.less'],
-        js_dev: [
-            './app/index.js',
-            './app/modules/**/*module.js',
-            './app/modules/**/*controller.js',
-            './app/modules/**/*.js',
-            '!./www/js/app.js',
-            '!./www/lib/**'
+        less: ['./app/css/**/*.less',
+            './app/css/*.css'
         ],
+
+        js_dev: [],
         js_dev_lazy: [
-            './.tmp/js/*.js',
-            '!./.tmp/serve/**/*.js'
+            './app/js/*.js',
         ],
+
         css_dev: [
-            './.tmp/**/*.css',
-            '!./.tmp/**/custom.css'
+            './.tmp/css/*.css',
         ],
-        css_dev_lazy: [
-            './.tmp/**/custom.css'
-        ],
+        css_dev_lazy: [],
+
         js_dist: [
-            './app/index.js',
-            './app/modules/**/*module.js',
-            './app/modules/**/*controller.js',
-            './app/modules/**/*.js',
-            './dist/scripts/*.js',
-            '!./.tmp/js',
-            '!./www/js/app.js',
-            '!./www/lib/**'
+            './dist/scripts/*.js'
         ],
         css_dist: [
             './dist/styles/*.css',
-            '!./.tmp/css',
-            '!./www/lib/**'
         ]
     },
     wiredep: {

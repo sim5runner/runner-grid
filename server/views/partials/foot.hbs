@@ -10,11 +10,17 @@
     <!-- endinject -->
     <!-- END CUSTOM ANGULARJS SCRIPTS -->
 
+    <!-- lazy:js -->
+    <!-- js files will be automatically insert here -->
+    <!-- endinject -->
+
     <script>
         var username = "{{ username }}", name = "{{name}}"
         console.log('current user: ' + username + ' : ' + name);
     </script>
-
-    <!-- lazy:js -->
-    <!-- js files will be automatically insert here -->
-    <!-- endinject -->
+    <script>
+        $("#menu-toggle").click(function(e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
+    </script>

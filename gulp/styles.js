@@ -7,9 +7,7 @@ var $ = require('gulp-load-plugins')();
 
 module.exports = function(options) {
     gulp.task('dev-styles', function () {
-        return gulp.src([
-            options.src + '/css/less/custom.less'
-        ])
+        return gulp.src(options.paths.less)
         .pipe(less({
             paths: [ path.join(__dirname, 'less', 'includes') ]
         }))
