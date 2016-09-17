@@ -89,8 +89,7 @@ app.set('view engine', '.hbs');
 require("./server/routes")(app, config);
 require("./server/middleware/mongoose")(app, config);
 
-//todo: start only if not already started
-//require("./server/middleware/start-grid")(app, config);
+require("./server/middleware/start-grid")(app, config);
 require("./server/middleware/clone-jf")(app, config);
 
 /**

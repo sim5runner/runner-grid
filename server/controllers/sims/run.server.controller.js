@@ -56,6 +56,7 @@ exports.runTask = function (req, res) {
         ls = process.spawn('cmd.exe', ['/c', cmd], options);
 
         ls.stdout.on('data', function(data){
+            // todo: preserve logs
             _io.emit(req.body.clientIp, util.ab2str(data));
             console.log(util.ab2str(data));
         })
@@ -66,7 +67,7 @@ exports.runTask = function (req, res) {
         });
 
         ls.on('exit', function (code) {
-            console.log('child process exited with code ' + code);
+            console.log('run command exited with code ' + code);
         });
 
         res.end("CMD_STARTED");

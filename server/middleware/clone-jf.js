@@ -30,7 +30,7 @@ module.exports = function(app, config) {
         });
 
         ls.on('exit', function (code) {
-            console.log('child process exited with code ' + code);
+            console.log('clone jf exited with code ' + code);
         });
 
     });
