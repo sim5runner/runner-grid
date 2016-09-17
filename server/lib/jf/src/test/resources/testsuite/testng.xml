@@ -1,0 +1,38 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="sims_automation_TestSuite" parallel="classes" thread-count="47" configfailurepolicy="continue">
+	<!-- Do not remove the comments -->
+	<!-- <parameter name="memoryUsageTracking" value="true"></parameter>
+ 	<parameter name="mode" value="local"></parameter> possible values local/lms -->
+ 	<listeners>
+		<listener class-name="com.compro.core.testframework.BaseListener" />
+	</listeners>
+	<test name="sims_tasks">
+	<!-- change include name in run to memory-test-group for memory tracking mode(when memoryUsageTracking parameter is set "true") -->
+ 	<!-- change include name in run to default-test-groups for selective groups -->
+  		  <groups>
+		  	<define name="memory-test-group">
+		  		<include name="Primary"></include>
+		  	</define>
+		  	<define name="default-test-groups">
+		  		<include name="Primary"></include>
+				<include name="Keyboard"></include>
+				<include name="Ribbon"></include>
+				<include name="Acceptance"></include>
+				<include name="Right-Click"></include>
+				<include name="Toolbar"></include>
+				<include name="Mouse"></include>
+				<include name="Other"></include>
+				<include name="Menu"></include>
+				<include name="Shortcut Menu"></include>
+				<include name="Right - Click"></include>
+				<include name="Robot"></include>
+		  	</define>
+		  	<run>
+		  		<include name="default-test-groups"></include>
+		  	</run>
+		</groups>
+		<classes>
+			<class name="com.compro.core.testframework.BaseTestFactory"/>
+		</classes>
+	</test> 
+</suite>

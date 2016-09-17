@@ -6,7 +6,7 @@
 exports.startGrid = function (req, res) {
 
     /**
-     * todo:
+     * todo: launch grid on server startup
      *
      *
      *

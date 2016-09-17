@@ -1,0 +1,655 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task id="GO16.WD.04.4A.01" name="WD Activity 4.01">
+    <description></description>
+    <friendlyTaskID>GO16.WD.04.4A.01.T1</friendlyTaskID>
+    <scenario name="T1">
+        <Items count="3">
+            <Item sno="1">
+                <Method group="undefined" name="Ribbon" sno="1">
+                    <Actions>
+                        <Action sno="1">
+                            <actionType name="selectText">
+                                <elementName>DocArea__paraStartsWith{Costa Rican}</elementName>
+                                <start>0</start>
+                                <end>17</end>
+                                <methodType>Mouse</methodType>
+                            </actionType>
+                        </Action>
+                        <Action sno="2">
+                            <actionType name="clickAndWait">
+                                <elementName>Ribbon_styles_more</elementName>
+                            </actionType>
+                        </Action>
+                        <Action sno="3">
+                            <actionType name="clickAndWait">
+                                <elementName>Ribbon_Styles_Title</elementName>
+                            </actionType>
+                        </Action>
+                    </Actions>
+                </Method>
+                <Method group="undefined" name="Ribbon(2)" sno="2">
+                    <Actions>
+                        <Action sno="1">
+                            <actionType name="selectText">
+                                <elementName>DocArea__paraStartsWith{Costa Rican}</elementName>
+                                <start>0</start>
+                                <end>17</end>
+                                <methodType>Mouse</methodType>
+                            </actionType>
+                        </Action>
+                        <Action sno="2">
+                            <actionType name="clickAndWait">
+                                <elementName>Ribbon_Styles_Title</elementName>
+                            </actionType>
+                        </Action>
+                    </Actions>
+                </Method>
+                <Method group="undefined" name="Ribbon(3)" sno="3">
+                    <Actions>
+                        <Action sno="1">
+                            <actionType name="clickAndWait">
+                                <elementName>DocArea__paraStartsWith{Costa Rican}</elementName>
+                            </actionType>
+                        </Action>
+                        <Action sno="2">
+                            <actionType name="clickAndWait">
+                                <elementName>Ribbon_styles_more</elementName>
+                            </actionType>
+                        </Action>
+                        <Action sno="3">
+                            <actionType name="clickAndWait">
+                                <elementName>Ribbon_Styles_Title</elementName>
+                            </actionType>
+                        </Action>
+                    </Actions>
+                </Method>
+                <Method group="undefined" name="Ribbon(4)" sno="4">
+                    <Actions>
+                        <Action sno="1">
+                            <actionType name="selectText">
+                                <elementName>DocArea__paraStartsWith{Costa Rican}</elementName>
+                                <start>0</start>
+                                <end>17</end>
+                                <methodType>Mouse</methodType>
+                            </actionType>
+                        </Action>
+                        <Action sno="2">
+                            <actionType name="clickAndWait">
+                                <elementName>Ribbon__Styles{launcher}</elementName>
+                            </actionType>
+                        </Action>
+                        <Action sno="3">
+                            <actionType name="clickAndWait">
+                                <elementName>StylePane_Title</elementName>
+                            </actionType>
+                        </Action>
+                        <Action sno="4">
+                            <actionType name="clickAndWait">
+                                <elementName>StylePane_Close</elementName>
+                            </actionType>
+                        </Action>
+                    </Actions>
+                </Method>
+                <Method group="undefined" name="Right - Click" sno="5">
+                    <Actions>
+                        <Action sno="1">
+                            <actionType name="clickAt">
+                                <elementName>DocArea__paraStartsWith{Costa Rican}</elementName>
+                                <pos>0</pos>
+                            </actionType>
+                        </Action>
+                        <Action sno="2">
+                            <actionType name="pressKey">
+                                <keyName>SHIFT</keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="3">
+                            <actionType name="pressKey">
+                                <keyName>ARROW_DOWN</keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="4">
+                            <actionType name="releaseKey">
+                                <keyName>SHIFT</keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="5">
+                            <actionType name="moveToElementCenter">
+                                <elementName>DocArea__paraStartsWith{Costa Rican}</elementName>
+                            </actionType>
+                        </Action>
+                        <Action sno="6">
+                            <actionType name="rightClickCurrentPos"></actionType>
+                        </Action>
+                        <Action sno="7">
+                            <actionType name="clickAndWait">
+                                <elementName>shytoolbar_styles</elementName>
+                            </actionType>
+                        </Action>
+                        <Action sno="8">
+                            <actionType name="clickAndWait">
+                                <elementName>shytoolbar_styles_Title</elementName>
+                            </actionType>
+                        </Action>
+                    </Actions>
+                </Method>
+                <Method group="undefined" name="Keyboard" sno="6">
+                    <Actions>
+                        <Action sno="1">
+                            <actionType name="selectText">
+                                <elementName>DocArea__paraStartsWith{Costa Rican}</elementName>
+                                <start>0</start>
+                                <end>17</end>
+                                <methodType>Mouse</methodType>
+                            </actionType>
+                        </Action>
+                        <Action sno="2">
+                            <actionType name="pressKey">
+                                <keyName>ALT, H, L</keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="3">
+                            <actionType name="pressKeyMultipleTimes">
+                                <keyName>ARROW_RIGHT</keyName>
+                                <numOfTimes>4</numOfTimes>
+                            </actionType>
+                        </Action>
+                        <Action sno="4">
+                            <actionType name="pressKey">
+                                <keyName>ENTER</keyName>
+                            </actionType>
+                        </Action>
+                    </Actions>
+                </Method>
+                <Method group="undefined" name="Keyboard(2)" sno="7">
+                    <Actions>
+                        <Action sno="1">
+                            <actionType name="selectText">
+                                <elementName>DocArea__paraStartsWith{Costa Rican}</elementName>
+                                <start>0</start>
+                                <end>17</end>
+                                <methodType>Mouse</methodType>
+                            </actionType>
+                        </Action>
+                        <Action sno="2">
+                            <actionType name="pressKey">
+                                <keyName>CONTROL+ALT+SHIFT+s</keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="3">
+                            <actionType name="pressKey">
+                                <keyName>F6</keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="4">
+                            <actionType name="pressKeyMultipleTimes">
+                                <keyName>ARROW_DOWN</keyName>
+                                <numOfTimes>5</numOfTimes>
+                            </actionType>
+                        </Action>
+                        <Action sno="5">
+                            <actionType name="pressKey">
+                                <keyName>ENTER</keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="6">
+                            <actionType name="pressKey">
+                                <keyName>CONTROL+ALT+SHIFT+s</keyName>
+                            </actionType>
+                        </Action>
+                    </Actions>
+                </Method>
+            </Item>
+            <Item sno="2">
+                <Method group="undefined" name="Ribbon" sno="1">
+                    <Actions>
+                        <Action sno="1">
+                            <actionType name="selectText">
+                                <elementName>DocArea__paraStartsWith{Requirements for}</elementName>
+                                <start>0</start>
+                                <end>35</end>
+                                <methodType>Mouse</methodType>
+                            </actionType>
+                        </Action>
+                        <Action sno="2">
+                            <actionType name="clickAndWait">
+                                <elementName>Ribbon_styles_more</elementName>
+                            </actionType>
+                        </Action>
+                        <Action sno="3">
+                            <actionType name="clickAndWait">
+                                <elementName>Ribbon_Styles_Subtitle</elementName>
+                            </actionType>
+                        </Action>
+                    </Actions>
+                </Method>
+                <Method group="undefined" name="Ribbon(2)" sno="2">
+                    <Actions>
+                        <Action sno="1">
+                            <actionType name="selectText">
+                                <elementName>DocArea__paraStartsWith{Requirements for}</elementName>
+                                <start>0</start>
+                                <end>35</end>
+                                <methodType>Mouse</methodType>
+                            </actionType>
+                        </Action>
+                        <Action sno="2">
+                            <actionType name="clickAndWait">
+                                <elementName>Ribbon_Styles_Subtitle</elementName>
+                            </actionType>
+                        </Action>
+                    </Actions>
+                </Method>
+                <Method group="undefined" name="Ribbon(3)" sno="3">
+                    <Actions>
+                        <Action sno="1">
+                            <actionType name="clickAt">
+                                <elementName>DocArea__paraStartsWith{Requirements for}</elementName>
+                                <pos>5</pos>
+                            </actionType>
+                        </Action>
+                        <Action sno="2">
+                            <actionType name="clickAndWait">
+                                <elementName>Ribbon_styles_more</elementName>
+                            </actionType>
+                        </Action>
+                        <Action sno="3">
+                            <actionType name="clickAndWait">
+                                <elementName>Ribbon_Styles_Subtitle</elementName>
+                            </actionType>
+                        </Action>
+                    </Actions>
+                </Method>
+                <Method group="undefined" name="Ribbon(4)" sno="4">
+                    <Actions>
+                        <Action sno="1">
+                            <actionType name="selectText">
+                                <elementName>DocArea__paraStartsWith{Requirements for}</elementName>
+                                <start>0</start>
+                                <end>35</end>
+                                <methodType>Mouse</methodType>
+                            </actionType>
+                        </Action>
+                        <Action sno="2">
+                            <actionType name="clickAndWait">
+                                <elementName>Ribbon__Styles{launcher}</elementName>
+                            </actionType>
+                        </Action>
+                        <Action sno="3">
+                            <actionType name="clickAndWait">
+                                <elementName>StylePane_Subtitle</elementName>
+                            </actionType>
+                        </Action>
+                        <Action sno="4">
+                            <actionType name="clickAndWait">
+                                <elementName>StylePane_Close</elementName>
+                            </actionType>
+                        </Action>
+                    </Actions>
+                </Method>
+                <Method group="undefined" name="Ribbon(5)" sno="5">
+                    <Actions>
+                        <Action sno="1">
+                            <actionType name="clickAt">
+                                <elementName>DocArea__paraStartsWith{Requirements for}</elementName>
+                                <pos>0</pos>
+                            </actionType>
+                        </Action>
+                        <Action sno="2">
+                            <actionType name="pressKey">
+                                <keyName>SHIFT</keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="3">
+                            <actionType name="pressKey">
+                                <keyName>ARROW_DOWN</keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="4">
+                            <actionType name="releaseKey">
+                                <keyName>SHIFT</keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="5">
+                            <actionType name="moveToElementCenter">
+                                <elementName>DocArea__paraStartsWith{Requirements for}</elementName>
+                            </actionType>
+                        </Action>
+                        <Action sno="6">
+                            <actionType name="rightClickCurrentPos"></actionType>
+                        </Action>
+                        <Action sno="7">
+                            <actionType name="clickAndWait">
+                                <elementName>shytoolbar_styles</elementName>
+                            </actionType>
+                        </Action>
+                        <Action sno="8">
+                            <actionType name="clickAndWait">
+                                <elementName>shytoolbar_styles_Subtitle</elementName>
+                            </actionType>
+                        </Action>
+                    </Actions>
+                </Method>
+                <Method group="undefined" name="Keyboard" sno="6">
+                    <Actions>
+                        <Action sno="1">
+                            <actionType name="clickAt">
+                                <elementName>DocArea__paraStartsWith{Requirements for}</elementName>
+                                <pos>5</pos>
+                            </actionType>
+                        </Action>
+                        <Action sno="2">
+                            <actionType name="pressKey">
+                                <keyName>ALT, H, L</keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="3">
+                            <actionType name="pressKeyMultipleTimes">
+                                <keyName>TAB</keyName>
+                                <numOfTimes>5</numOfTimes>
+                            </actionType>
+                        </Action>
+                        <Action sno="4">
+                            <actionType name="pressKey">
+                                <keyName>ENTER</keyName>
+                            </actionType>
+                        </Action>
+                    </Actions>
+                </Method>
+                <Method group="undefined" name="Keyboard(2)" sno="7">
+                    <Actions>
+                        <Action sno="1">
+                            <actionType name="clickAt">
+                                <elementName>DocArea__paraStartsWith{Requirements for}</elementName>
+                                <pos>5</pos>
+                            </actionType>
+                        </Action>
+                        <Action sno="2">
+                            <actionType name="pressKey">
+                                <keyName>CONTROL+ALT+SHIFT+s </keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="3">
+                            <actionType name="pressKey">
+                                <keyName>F6</keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="4">
+                            <actionType name="pressKeyMultipleTimes">
+                                <keyName>ARROW_DOWN</keyName>
+                                <numOfTimes>6</numOfTimes>
+                            </actionType>
+                        </Action>
+                        <Action sno="5">
+                            <actionType name="pressKey">
+                                <keyName>ENTER</keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="6">
+                            <actionType name="pressKey">
+                                <keyName>CONTROL+ALT+SHIFT+s </keyName>
+                            </actionType>
+                        </Action>
+                    </Actions>
+                </Method>
+            </Item>
+            <Item sno="3">
+                <Method group="undefined" name="Ribbon" sno="1">
+                    <Actions>
+                        <Action sno="1">
+                            <actionType name="selectMultiParaText">
+                                <elementNameStart>DocArea__paraStartsWith{Costa Rican Treks offers}</elementNameStart>
+                                <elementNameEnd>DocArea__paraStartsWith{Please notify us}</elementNameEnd>
+                                <Start>0</Start>
+                                <End>154</End>
+                                <methodType>Mouse</methodType>
+                            </actionType>
+                        </Action>
+                        <Action sno="2">
+                            <actionType name="clickAndWait">
+                                <elementName>Ribbon_styles_more</elementName>
+                            </actionType>
+                        </Action>
+                        <Action sno="3">
+                            <actionType name="clickAndWait">
+                                <elementName>Ribbon_Styles_Emphasis</elementName>
+                            </actionType>
+                        </Action>
+                    </Actions>
+                </Method>
+                <Method group="undefined" name="Ribbon(2)" sno="2">
+                    <Actions>
+                        <Action sno="1">
+                            <actionType name="selectMultiParaText">
+                                <elementNameStart>DocArea__paraStartsWith{Costa Rican Treks offers}</elementNameStart>
+                                <elementNameEnd>DocArea__paraStartsWith{Please notify us}</elementNameEnd>
+                                <Start>0</Start>
+                                <End>154</End>
+                                <methodType>Mouse</methodType>
+                            </actionType>
+                        </Action>
+                        <Action sno="2">
+                            <actionType name="clickAndWait">
+                                <elementName>Ribbon__Styles{launcher}</elementName>
+                            </actionType>
+                        </Action>
+                        <Action sno="3">
+                            <actionType name="waitForSec">
+                                <time>2</time>
+                            </actionType>
+                        </Action>
+                        <Action sno="4">
+                            <actionType name="clickAndWait">
+                                <elementName>StylePane_Emphasis</elementName>
+                            </actionType>
+                        </Action>
+                        <Action sno="5">
+                            <actionType name="clickAndWait">
+                                <elementName>StylePane_Close</elementName>
+                            </actionType>
+                        </Action>
+                    </Actions>
+                </Method>
+                <Method group="undefined" name="Ribbon(3)" sno="3">
+                    <Actions>
+                        <Action sno="1">
+                            <actionType name="clickAt">
+                                <elementName>DocArea__paraStartsWith{Costa Rican Treks offers}</elementName>
+                                <pos>0</pos>
+                            </actionType>
+                        </Action>
+                        <Action sno="2">
+                            <actionType name="pressKey">
+                                <keyName>SHIFT</keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="3">
+                            <actionType name="pressKeyMultipleTimes">
+                                <keyName>ARROW_DOWN</keyName>
+                                <numOfTimes>5</numOfTimes>
+                            </actionType>
+                        </Action>
+                        <Action sno="4">
+                            <actionType name="releaseKey">
+                                <keyName>SHIFT</keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="5">
+                            <actionType name="moveToElementCenter">
+                                <elementName>DocArea__paraStartsWith{Costa Rican Treks offers}</elementName>
+                            </actionType>
+                        </Action>
+                        <Action sno="6">
+                            <actionType name="rightClickCurrentPos"></actionType>
+                        </Action>
+                        <Action sno="7">
+                            <actionType name="clickAndWait">
+                                <elementName>shytoolbar_styles</elementName>
+                            </actionType>
+                        </Action>
+                        <Action sno="8">
+                            <actionType name="clickAndWait">
+                                <elementName>shytoolbar_styles_emphasis</elementName>
+                            </actionType>
+                        </Action>
+                    </Actions>
+                </Method>
+                <Method group="undefined" name="Keyboard" sno="4">
+                    <Actions>
+                        <Action sno="1">
+                            <actionType name="selectMultiParaText">
+                                <elementNameStart>DocArea__paraStartsWith{Costa Rican Treks offers}</elementNameStart>
+                                <elementNameEnd>DocArea__paraStartsWith{Please notify us}</elementNameEnd>
+                                <Start>0</Start>
+                                <End>154</End>
+                                <methodType>Mouse</methodType>
+                            </actionType>
+                        </Action>
+                        <Action sno="2">
+                            <actionType name="pressKey">
+                                <keyName>ALT, H, L </keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="3">
+                            <actionType name="pressKeyMultipleTimes">
+                                <keyName>TAB</keyName>
+                                <numOfTimes>7</numOfTimes>
+                            </actionType>
+                        </Action>
+                        <Action sno="4">
+                            <actionType name="pressKey">
+                                <keyName>ENTER</keyName>
+                            </actionType>
+                        </Action>
+                    </Actions>
+                </Method>
+                <Method group="undefined" name="Keyboard(2)" sno="5">
+                    <Actions>
+                        <Action sno="1">
+                            <actionType name="selectMultiParaText">
+                                <elementNameStart>DocArea__paraStartsWith{Costa Rican Treks offers}</elementNameStart>
+                                <elementNameEnd>DocArea__paraStartsWith{Please notify us}</elementNameEnd>
+                                <Start>0</Start>
+                                <End>154</End>
+                                <methodType>Mouse</methodType>
+                            </actionType>
+                        </Action>
+                        <Action sno="2">
+                            <actionType name="pressKey">
+                                <keyName>CONTROL+ALT+SHIFT+s</keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="3">
+                            <actionType name="pressKey">
+                                <keyName>F6</keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="4">
+                            <actionType name="pressKeyMultipleTimes">
+                                <keyName>ARROW_DOWN</keyName>
+                                <numOfTimes>8</numOfTimes>
+                            </actionType>
+                        </Action>
+                        <Action sno="5">
+                            <actionType name="pressKey">
+                                <keyName>ENTER</keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="6">
+                            <actionType name="pressKey">
+                                <keyName>CONTROL+ALT+SHIFT+s</keyName>
+                            </actionType>
+                        </Action>
+                    </Actions>
+                </Method>
+                <Method group="undefined" name="Keyboard(3)" sno="6">
+                    <Actions>
+                        <Action sno="1">
+                            <actionType name="selectMultiParaText">
+                                <elementNameStart>DocArea__paraStartsWith{Costa Rican Treks offers}</elementNameStart>
+                                <elementNameEnd>DocArea__paraStartsWith{Please notify us}</elementNameEnd>
+                                <Start>0</Start>
+                                <End>154</End>
+                                <methodType>Mouse</methodType>
+                            </actionType>
+                        </Action>
+                        <Action sno="2">
+                            <actionType name="pressKey">
+                                <keyName>CONTROL+SHIFT+s</keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="3">
+                            <actionType name="pressKey">
+                                <keyName>F6</keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="4">
+                            <actionType name="pressKeyMultipleTimes">
+                                <keyName>ARROW_DOWN</keyName>
+                                <numOfTimes>8</numOfTimes>
+                            </actionType>
+                        </Action>
+                        <Action sno="5">
+                            <actionType name="pressKey">
+                                <keyName>ENTER</keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="6">
+                            <actionType name="pressKey">
+                                <keyName>F6</keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="7">
+                            <actionType name="pressKey">
+                                <keyName>CONTROL+SPACEBAR+c</keyName>
+                            </actionType>
+                        </Action>
+                    </Actions>
+                </Method>
+                <Method group="undefined" name="Ribbon(4)" sno="7">
+                    <Actions>
+                        <Action sno="1">
+                            <actionType name="selectMultiParaText">
+                                <elementNameStart>DocArea__paraStartsWith{Costa Rican Treks offers}</elementNameStart>
+                                <elementNameEnd>DocArea__paraStartsWith{Please notify us}</elementNameEnd>
+                                <Start>0</Start>
+                                <End>154</End>
+                                <methodType>Mouse</methodType>
+                            </actionType>
+                        </Action>
+                        <Action sno="2">
+                            <actionType name="clickAndWait">
+                                <elementName>Ribbon_styles_more</elementName>
+                            </actionType>
+                        </Action>
+                        <Action sno="3">
+                            <actionType name="clickAndWait">
+                                <elementName>Ribbon_Styles_ApplyStyle</elementName>
+                            </actionType>
+                        </Action>
+                        <Action sno="4">
+                            <actionType name="clickAndWait">
+                                <elementName>ApplyStyle_StyleName_Arrow</elementName>
+                            </actionType>
+                        </Action>
+                        <Action sno="5">
+                            <actionType name="scroll">
+                                <elementName>ApplyStyle_Style_Emphasis</elementName>
+                            </actionType>
+                        </Action>
+                        <Action sno="6">
+                            <actionType name="clickAndWait">
+                                <elementName>ApplyStyle_Style_Emphasis</elementName>
+                            </actionType>
+                        </Action>
+                        <Action sno="7">
+                            <actionType name="clickAndWait">
+                                <elementName>ApplyStyle_Close</elementName>
+                            </actionType>
+                        </Action>
+                    </Actions>
+                </Method>
+            </Item>
+        </Items>
+    </scenario>
+</Task>

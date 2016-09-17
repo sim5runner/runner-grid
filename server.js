@@ -89,6 +89,8 @@ app.set('view engine', '.hbs');
 require("./server/routes")(app, config);
 require("./server/middleware/mongoose")(app, config);
 
+require("./server/middleware/startSeleniumGrid")(app, config);
+
 /**
  * Error handling
  */
