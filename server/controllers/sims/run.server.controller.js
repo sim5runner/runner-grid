@@ -3,8 +3,6 @@
  */
 'use strict';
 
-//var io = require('socket.io')(server);
-
 var util = require('../../utils');
 
 exports.runTask = function (req, res) {
@@ -32,7 +30,8 @@ exports.runTask = function (req, res) {
 			"filename": "Test_GO16_WD_04_4A_01_A1",
 			"xml": "xml file content",
 			"java": "java file content"
-			}
+			},
+    "clientIp" : "192.168.1.97"
     }
 
      POST: http://RunnerGrid:8080/sims/runtask
@@ -44,6 +43,7 @@ exports.runTask = function (req, res) {
     function(){
 
         console.log('running command ' + cmd);
+        _io.emit(req.body.clientIp, 'client: '+req.body.clientIp);
 
         var process = require('child_process');
         var ls;
@@ -55,31 +55,21 @@ exports.runTask = function (req, res) {
 
         ls = process.spawn('cmd.exe', ['/c', cmd], options);
 
-
-
         ls.stdout.on('data', function(data){
-            //console.log('tt')
-            //io.emit('stream', {n:ab2str(data)});
-            //io.sockets.on('connection', function (socket) {
-            //io.sockets.broadcast.emit('stream', {n:data});
-            //});
-
+            _io.emit(req.body.clientIp, util.ab2str(data));
             console.log(util.ab2str(data));
         })
 
         ls.stderr.on('data', function (data) {
-            //io.emit('stream', {n:ab2str(data)});
-
+            _io.emit(req.body.clientIp, util.ab2str(data));
             console.log(util.ab2str(data));
         });
 
         ls.on('exit', function (code) {
-            //io.emit('stream', {n:ab2str(code)});
-
             console.log('child process exited with code ' + code);
         });
 
-        res.end("cmd started.");
+        res.end("CMD_STARTED");
     },
     function(er) {
 
@@ -90,9 +80,10 @@ exports.runTask = function (req, res) {
 
 function writeTestFile(filename,java,xml,done, err){
 
+    // todo: create directory recursively
+
     // todo: write java & xml files
     console.log('writing.. '+ filename);
 
     done();
-
 };

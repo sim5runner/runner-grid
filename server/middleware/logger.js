@@ -3,6 +3,7 @@
  */
 
 'use strict';
+//http://stackoverflow.com/questions/10987444/how-to-use-global-variable-in-node-js
 
 module.exports = function(app, config) {
     /**

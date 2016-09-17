@@ -1,6 +1,7 @@
 /**
  * Created by AbhishekK on 9/13/2016.
  */
+var fs = require('fs');
 
 exports.arrayUnique = function arrayUnique(array) {
         var a = array.concat();
@@ -17,4 +18,47 @@ exports.arrayUnique = function arrayUnique(array) {
 exports.ab2str =  function ab2str(buf) {
         return String.fromCharCode.apply(null, new Uint16Array(buf));
     };
+
+var rmdirAsync = function(path, callback) {
+    fs.readdir(path, function(err, files) {
+        if(err) {
+            // Pass the error on to callback
+            callback(err, []);
+            return;
+        }
+        var wait = files.length,
+            count = 0,
+            folderDone = function(err) {
+                count++;
+                // If we cleaned out all the files, continue
+                if( count >= wait || err) {
+                    fs.rmdir(path,callback);
+                }
+            };
+        // Empty directory to bail early
+        if(!wait) {
+            folderDone();
+            return;
+        }
+
+        // Remove one or more trailing slash to keep from doubling up
+        path = path.replace(/\/+$/,"");
+        files.forEach(function(file) {
+            var curPath = path + "/" + file;
+            fs.lstat(curPath, function(err, stats) {
+                if( err ) {
+                    callback(err, []);
+                    return;
+                }
+                if( stats.isDirectory() ) {
+                    rmdirAsync(curPath, folderDone);
+                } else {
+                    fs.unlink(curPath, folderDone);
+                }
+            });
+        });
+    });
+};
+
+exports.rmdirAsync = rmdirAsync;
 

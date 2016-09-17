@@ -89,7 +89,9 @@ app.set('view engine', '.hbs');
 require("./server/routes")(app, config);
 require("./server/middleware/mongoose")(app, config);
 
-require("./server/middleware/startSeleniumGrid")(app, config);
+//todo: start only if not already started
+//require("./server/middleware/start-grid")(app, config);
+require("./server/middleware/clone-jf")(app, config);
 
 /**
  * Error handling
@@ -101,9 +103,17 @@ app.use(function(err, req, res, next){
 });
 
 /**
+ * Socket Conn
+ */
+
+var http = require('http').Server(app);
+GLOBAL._io = require('socket.io')(http);
+
+/**
  * Start listening
  */
-app.listen(port, function() {
+
+http.listen(port, function() {
     logger.info('Your Automation App is running on http://localhost:' + port);
     logger.info('Environment is set to ' + (process.env.NODE_ENV || 'development'));
 });
