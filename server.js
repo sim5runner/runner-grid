@@ -13,7 +13,6 @@ const expressValidator = require('express-validator');
 const compress = require('compression');
 const bodyParser = require('body-parser');
 const path = require('path');
-const os = require('os');
 
 /**
  * @type {Logger|exports}
@@ -113,21 +112,6 @@ GLOBAL._serverDirectory = __dirname;
 /**
  * Start listening
  */
-
-var cpus = os.cpus();
-
-for(var i = 0, len = cpus.length; i < len; i++) {
-    console.log("CPU %s:", i);
-    var cpu = cpus[i], total = 0;
-
-    for(var type in cpu.times) {
-        total += cpu.times[type];
-    }
-
-    for(type in cpu.times) {
-        console.log("\t totol % ", type, Math.round(100 * cpu.times[type] / total));
-    }
-}
 
 http.listen(port, function() {
     logger.info('Your Automation App is running on http://localhost:' + port);

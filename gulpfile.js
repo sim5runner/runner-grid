@@ -1,5 +1,5 @@
 'use strict';
-
+//todo;fix for server to pic file from app in development mode
 var gulp = require('gulp'),
     inject = require('gulp-inject'), //https://www.npmjs.com/package/gulp-inject
     path = require('path'),
