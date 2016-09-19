@@ -13,6 +13,7 @@ const expressValidator = require('express-validator');
 const compress = require('compression');
 const bodyParser = require('body-parser');
 const path = require('path');
+const os = require('os');
 
 /**
  * @type {Logger|exports}
@@ -89,8 +90,8 @@ app.set('view engine', '.hbs');
 require("./server/routes")(app, config);
 require("./server/middleware/mongoose")(app, config);
 
-require("./server/middleware/start-grid")(app, config);
-require("./server/middleware/clone-jf")(app, config);
+//require("./server/middleware/start-grid")(app, config);
+//require("./server/middleware/clone-jf")(app, config);
 
 /**
  * Error handling
@@ -107,10 +108,26 @@ app.use(function(err, req, res, next){
 
 var http = require('http').Server(app);
 GLOBAL._io = require('socket.io')(http);
+GLOBAL._serverDirectory = __dirname;
 
 /**
  * Start listening
  */
+
+var cpus = os.cpus();
+
+for(var i = 0, len = cpus.length; i < len; i++) {
+    console.log("CPU %s:", i);
+    var cpu = cpus[i], total = 0;
+
+    for(var type in cpu.times) {
+        total += cpu.times[type];
+    }
+
+    for(type in cpu.times) {
+        console.log("\t totol % ", type, Math.round(100 * cpu.times[type] / total));
+    }
+}
 
 http.listen(port, function() {
     logger.info('Your Automation App is running on http://localhost:' + port);

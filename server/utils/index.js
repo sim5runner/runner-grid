@@ -3,6 +3,7 @@
  */
 var fs = require('fs');
 var net = require('net');
+var path = require('path');
 
 exports.arrayUnique = function arrayUnique(array) {
         var a = array.concat();
@@ -77,6 +78,44 @@ var portInUse = function(port, callback) {
     });
 };
 
+var mkdirParent = function(dirPath, callback) {
+    //Call the standard fs.mkdir
+    var mode = null;
+    fs.mkdir(dirPath, mode, function(error) {
+        //When it fail in this way, do the custom steps
+        if (error && error.errno === 34) {
+            //Create all the parents recursively
+            mkdirParent(path.dirname(dirPath), mode, callback);
+            //And then the directory
+            mkdirParent(dirPath, mode, callback);
+        }
+        //Manually run the callback since we used our own callback to do all these
+        setTimeout(function(){ callback && callback(error); }, 3000);
+    });
+};
+
+var getDirFromXMlName = function(taskXMLName){
+
+    var folderNames = taskXMLName.split("_");
+
+    if(folderNames.length == 6)
+    {
+        var dirName = "";
+        dirName = "//" + folderNames[0] + "//" + folderNames[1] + "//" + folderNames[2] + "//";
+        var tmpFolderName = folderNames[0] + "_" + folderNames[1] + "_" + folderNames[2] + "_";
+        dirName = dirName + taskXMLName.replace(new RegExp(tmpFolderName, 'g'), '').replace(new RegExp('_', 'g'), '.').replace(new RegExp('.xml', 'g'), '');
+
+        console.log('dirName: ' + dirName);
+        return dirName;
+
+    }
+    else {
+        return null;
+    }
+};
+
 exports.portInUse = portInUse;
 exports.rmdirAsync = rmdirAsync;
+exports.mkdirParent = mkdirParent;
+exports.getDirFromXMlName = getDirFromXMlName;
 

@@ -13,12 +13,12 @@ module.exports = function(app, config) {
     var ls;
 
     //todo: change dir path
-    var options = { cwd: "H:/runner-grid/server/lib",
+    var options = { cwd: (__dirname+"/server/lib"),
         env: process.env
     };
 
     //todo: change dir path
-    util.rmdirAsync('H:/runner-grid/server/lib/jf', function(){
+    util.rmdirAsync((_serverDirectory +'/server/lib/jf'), function(){
 
         ls = process.spawn('cmd.exe', ['/c', 'git clone https://github.com/sim5runner/jf.git'], options);
         ls.stdout.on('data', function(data){

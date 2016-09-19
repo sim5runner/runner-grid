@@ -42,7 +42,7 @@ if (RTCPeerConnection) (function () {
             return false;
         });
         socket.on(displayAddrs[0], function(msg){
-            $('#messages').append($('<li>').text(msg));
+            $('#messages').append($('<li>').html(msg));
         });
     }
 
