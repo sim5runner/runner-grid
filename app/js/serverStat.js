@@ -103,7 +103,7 @@ $(function () {
                     },
                     yAxis: {
                         title: {
-                            text: 'Memory ( GB )'
+                            text: 'Max: '+ ((data.memory.total) / 1024).toFixed(2) + ' GB'
                         },
                         min: 0,
                         max: maxServerMemory
