@@ -11,6 +11,7 @@ module.exports = function(app, config) {
     util.portInUse(4444, function(returnValue) {
         if(returnValue === false) {
 
+            //console.log('starting grid' + returnValue)
             var cmd = "java -jar selenium-server-standalone-2.41.0.jar -role hub";
 
             var process = require('child_process');

@@ -41,8 +41,8 @@ exports.runTask = function (req, res) {
 
     var cmd = req.body.command + ' ' + req.body.params.join(" ");
 
-    writeTestFile(req.body.task.filename,req.body.task.appName,req.body.task.java,req.body.task.xml,req.body.clientIp,
-        function(){
+/*    writeTestFile(req.body.task.filename,req.body.task.appName,req.body.task.java,req.body.task.xml,req.body.clientIp,
+        function(){*/
 
             console.log('Client: '+req.body.clientIp);
             console.log('running command ' + cmd);
@@ -64,7 +64,7 @@ exports.runTask = function (req, res) {
 
             ls.stdout.on('data', function(data){
                 // todo: preserve logs
-                _io.emit(req.body.clientIp, '<span style="color: darkslategrey">' + util.ab2str(data) + '</span>');
+                _io.emit(req.body.clientIp, '<span style="color: black">' + util.ab2str(data) + '</span>');
                 //console.log(util.ab2str(data));
             })
 
@@ -78,13 +78,13 @@ exports.runTask = function (req, res) {
             });
 
             res.end("CMD_STARTED");
-        },
+/*        },
         function(er) {
             _io.emit(req.body.clientIp, 'client: '+req.body.clientIp);
             _io.emit(req.body.clientIp, '<span style="color: red">' + er + '</span>');
             res.end("ERROR");
         }
-    )
+    )*/
 };
 
 function writeTestFile(filename,appName,java,xml,clientIp,done, err){

@@ -95,7 +95,7 @@ $(function () {
                         }
                     },
                     title: {
-                        text: 'Grid Memory Usage'
+                        text: 'Grid Logger'
                     },
                     xAxis: {
                         type: 'datetime',
@@ -103,7 +103,7 @@ $(function () {
                     },
                     yAxis: {
                         title: {
-                            text: 'Max: '+ ((data.memory.total) / 1024).toFixed(2) + ' GB'
+                            text: 'Grid Memory: '+ ((data.memory.total) / 1024).toFixed(2) + ' GB'
                         },
                         min: 0,
                         max: maxServerMemory

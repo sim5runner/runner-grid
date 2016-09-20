@@ -13,7 +13,7 @@ module.exports = function(app, config) {
     var ls;
 
     //todo: change dir path
-    var options = { cwd: (__dirname+"/server/lib"),
+    var options = { cwd: (_serverDirectory+"/server/lib"),
         env: process.env
     };
 
