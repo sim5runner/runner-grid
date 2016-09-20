@@ -57,8 +57,8 @@ if (process.env.NODE_ENV === 'production') {
     app.set('views', viewsPath);
 } else {
     // make express look in the public directory for assets (css/js/img)
-    app.use(express.static(__dirname + '/.tmp/'));
     app.use(express.static(__dirname + '/app/'));
+    app.use(express.static(__dirname + '/.tmp/'));
     app.set('views', viewsPath);
 }
 
@@ -89,7 +89,7 @@ app.set('view engine', '.hbs');
 require("./server/routes")(app, config);
 require("./server/middleware/mongoose")(app, config);
 
-//require("./server/middleware/start-grid")(app, config);
+require("./server/middleware/start-grid")(app, config);
 //require("./server/middleware/clone-jf")(app, config);
 
 /**

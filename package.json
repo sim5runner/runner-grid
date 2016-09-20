@@ -54,7 +54,8 @@
     "wiredep": "~2.2.0",
     "wrench": "~1.5.8",
     "jshint-stylish": "~1.0.0",
-    "socket.io": ""
+    "socket.io": "",
+    "mkdirp":""
     },
   "engines": {
     "node" : "4.4.4"

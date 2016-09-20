@@ -5,6 +5,7 @@
 
 var util = require('../../utils');
 var fs = require('fs');
+var mkdirp = require('mkdirp');
 
 exports.runTask = function (req, res) {
 
@@ -49,6 +50,8 @@ exports.runTask = function (req, res) {
             console.log('running command ' + cmd);
 
             _io.emit(req.body.clientIp, 'Client: '+req.body.clientIp);
+            _io.emit(req.body.clientIp, 'Requested: ');
+            _io.emit(req.body.clientIp, JSON.stringify(req.body));
             _io.emit(req.body.clientIp, 'Running command ' + cmd);
 
             var process = require('child_process');
@@ -64,7 +67,7 @@ exports.runTask = function (req, res) {
             ls.stdout.on('data', function(data){
                 // todo: preserve logs
                 _io.emit(req.body.clientIp, '<span style="color: darkslategrey">' + util.ab2str(data) + '</span>');
-                console.log(util.ab2str(data));
+                //console.log(util.ab2str(data));
             })
 
             ls.stderr.on('data', function (data) {
@@ -92,15 +95,18 @@ function writeTestFile(filename,appName,java,xml,clientIp,done, err){
 
     var _taskXmlPath = util.getDirFromXMlName(filename);
 
-    var xmlDirectory = (_serverDirectory+"/server/lib/jf/src/test/resources/taskXML/" + _taskXmlPath);
+    var xmlDirectory = (_serverDirectory+"/server/lib/jf/src/test/resources/taskXML" + _taskXmlPath);
     var xmlfilepath = xmlDirectory + "/" + filename + '.xml';
 
-    var javafilepath = (_serverDirectory+"/server/lib/jf/src/test/java/testcase/"+appName + "/" + filename + '.java');
+    var javafilepath = (_serverDirectory+"/server/lib/jf/src/test/java/testcase/"+appName + "/Test_" + filename + '.java');
 
     if (!(fs.existsSync(xmlDirectory))){
-        util.mkdirParent(xmlDirectory, function(){
-            console.log('creating dir.. '+ xmlDirectory);
-            writeFilesToDisk (xmlfilepath,xml,javafilepath,java);
+        console.log('creating dir.. '+ xmlDirectory);
+        mkdirp(xmlDirectory, function (err) {
+            if (err) console.error(err)
+            else {
+                writeFilesToDisk (xmlfilepath,xml,javafilepath,java);
+            }
         });
     } else {
         writeFilesToDisk (xmlfilepath, xml, javafilepath, java);

@@ -101,7 +101,7 @@ var getDirFromXMlName = function(taskXMLName){
     if(folderNames.length == 6)
     {
         var dirName = "";
-        dirName = "//" + folderNames[0] + "//" + folderNames[1] + "//" + folderNames[2] + "//";
+        dirName = "/" + folderNames[0] + "/" + folderNames[1] + "/" + folderNames[2] + "/";
         var tmpFolderName = folderNames[0] + "_" + folderNames[1] + "_" + folderNames[2] + "_";
         dirName = dirName + taskXMLName.replace(new RegExp(tmpFolderName, 'g'), '').replace(new RegExp('_', 'g'), '.').replace(new RegExp('.xml', 'g'), '');
 
