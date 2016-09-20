@@ -9,10 +9,10 @@ var apirouter = require('express').Router();
 var stat = require('../../controllers/stat.server.controller');
 
 // Middleware for all this apirouters requests
-apirouter.use(function timeLog(req, res, next) {
+/*apirouter.use(function timeLog(req, res, next) {
   console.log('Request Received: ', dateDisplayed(Date.now()));
   next();
-});
+});*/
 
 // add data: error on existing data key for user
 apirouter.get('/server', stat.serverUsage);

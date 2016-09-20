@@ -27,6 +27,7 @@ const logger = bunyan.createLogger({name: 'RunnerGrid', stream: formatOut, level
  */
 const config = require("./server/config");
 let app = express();
+GLOBAL._serverDirectory = __dirname;
 
 /**
  * Middlewares
@@ -107,7 +108,6 @@ app.use(function(err, req, res, next){
 
 var http = require('http').Server(app);
 GLOBAL._io = require('socket.io')(http);
-GLOBAL._serverDirectory = __dirname;
 
 /**
  * Start listening

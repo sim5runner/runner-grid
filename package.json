@@ -1,7 +1,7 @@
 {
-  "name": "SIM5Automation",
+  "name": "GridRunner",
   "version": "0.0.1",
-  "description": "SIM5 Automation Tool",
+  "description": "Grid Runner",
   "main": "server.js",
   "scripts": {
     "postinstall": "bower prune && bower install && gulp",

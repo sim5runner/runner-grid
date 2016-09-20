@@ -28,7 +28,7 @@ function AnimateCircle(container_id, animatePercentage) {
         easing: 'bounce',
         strokeWidth: 5,
         text: {
-            value: (animatePercentage * 100).toFixed(2) + " % used.",
+            value: (animatePercentage * 100).toFixed(2) + "%",
             className: 'progressbar__label'
         },
         // Set default step function for all animate calls
@@ -43,7 +43,7 @@ function AnimateCircle(container_id, animatePercentage) {
             try{
                 per = (parseInt(data.memory.total)-parseInt(data.memory.free)) / parseInt(data.memory.total);
             } catch(er){console.log(er)}
-            circle.text.textContent = (per * 100).toFixed(2) + " % used."
+            circle.text.textContent = (per * 100).toFixed(2) + "%"
             circle.animate(per.toFixed(2), {
                 from: {
                     color: startColor
@@ -158,7 +158,7 @@ $(document).ready(function() {
             $('#container').width('90%');
         } else {
             $('#circle-container').show();
-            $('#container').width('70%');
+            $('#container').width('75%');
         }
     }
     // Execute on load

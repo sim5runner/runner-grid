@@ -9,8 +9,6 @@ var mkdirp = require('mkdirp');
 
 exports.runTask = function (req, res) {
 
-    //console.log(req.body)
-
     /**
      * todo:
      * 1. establish 2way connection with client
