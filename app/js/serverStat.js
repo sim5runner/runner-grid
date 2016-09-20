@@ -168,3 +168,17 @@ $(document).ready(function() {
 });
 
 $("#grid-url").attr('href', location.protocol+'//'+location.hostname + ':4444/grid/console');
+
+$(document).ready(function() {
+    $(document).delegate('.open', 'click', function(event){
+        $(this).addClass('oppenned');
+        event.stopPropagation();
+    })
+    $(document).delegate('body', 'click', function(event) {
+        $('.open').removeClass('oppenned');
+    })
+    $(document).delegate('.cls', 'click', function(event){
+        $('.open').removeClass('oppenned');
+        event.stopPropagation();
+    });
+});
