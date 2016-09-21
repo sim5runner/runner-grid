@@ -43,7 +43,9 @@ if (RTCPeerConnection) (function () {
         });
         socket.on(displayAddrs[0], function(msg){
             $('#messages').append($('<li>').html(msg));
-            window.scrollTo(0,document.body.scrollHeight);
+            if ( $('#auto-scroll').is(':checked') ) {
+                window.scrollTo(0,document.body.scrollHeight);
+            }
         });
     }
 
