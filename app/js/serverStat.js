@@ -106,7 +106,16 @@ $(function () {
                             text: 'Grid Memory: '+ ((data.memory.total) / 1024).toFixed(2) + ' GB'
                         },
                         min: 0,
-                        max: maxServerMemory
+                        max: maxServerMemory,
+                        plotLines: [{
+                            value: (maxServerMemory + 0.2),
+                            color: 'red',
+                            dashStyle: 'shortdash',
+                            width: 2,
+                            label: {
+                                text: 'Maximum memory'
+                            }
+                        }]
                     },
                     tooltip: {
                         formatter: function () {
