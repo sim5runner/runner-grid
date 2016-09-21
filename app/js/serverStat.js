@@ -190,4 +190,14 @@ $(document).ready(function() {
         $('.open').removeClass('oppenned');
         event.stopPropagation();
     });
+
+    $("#script-dn").click(function(){
+        var batFileContent = '@echo off' +'\n' +
+            'echo enter username:' + '\n' +
+            'set /p username=""' +  '\n' +
+            'echo connecting browser node to grid..' + '\n' +
+            'java -jar selenium-server-standalone-2.41.0.jar -role webdriver -hub ' +
+            location.protocol+'//'+location.hostname + ':4444/grid//register -browser browserName="chrome",version=ANY,platform=WINDOWS,maxInstances=5,applicationName=%username% -Dwebdriver.chrome.driver=chromedriver.exe -port 6666'
+        download(batFileContent, "browser-connect.bat", "text/plain");
+    });
 });

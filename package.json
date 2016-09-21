@@ -55,7 +55,8 @@
     "wrench": "~1.5.8",
     "jshint-stylish": "~1.0.0",
     "socket.io": "",
-    "mkdirp":""
+    "mkdirp":"",
+    "downloadjs":""
     },
   "engines": {
     "node" : "4.4.4"
