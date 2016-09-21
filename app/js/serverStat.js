@@ -95,7 +95,7 @@ $(function () {
                         }
                     },
                     title: {
-                        text: 'Grid Logger'
+                        text: 'Grid Memory | Logger - Client'
                     },
                     xAxis: {
                         type: 'datetime',
@@ -200,4 +200,9 @@ $(document).ready(function() {
             location.protocol+'//'+location.hostname + ':4444/grid//register -browser browserName="chrome",version=ANY,platform=WINDOWS,maxInstances=5,applicationName=%username% -Dwebdriver.chrome.driver=chromedriver.exe -port 6666'
         download(batFileContent, "browser-connect.bat", "text/plain");
     });
+});
+
+
+$('.flip').click(function(){
+    $(this).find('.card').toggleClass('flipped');
 });

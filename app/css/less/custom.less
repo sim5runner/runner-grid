@@ -281,4 +281,92 @@ a{
   -webkit-transition: All 0.3s ease;
   -moz-transition: All 0.3s ease;
   -o-transition: All 0.3s ease;
+};
+
+.topband-badge {
+  height: auto;
+  width: auto;
+  background: #292a2d;
+  padding: 10px 20px;
+  margin: 10px 20px;
+  color: white;
+  line-height: 3em;
+  white-space: nowrap;
 }
+
+div.location > span.holder {
+  position: absolute;
+  margin: 5px 8px;
+  color: #ddd;
+  cursor: auto;
+  font-family: Helvetica;
+  font-size: 11pt;
+  z-index: 1;
+}
+
+div.location > span.holder > span.blue{
+  color: #819FF7;
+}
+
+div.badgec > span {
+  padding:10px 10px;
+  font-size:11pt;
+  background-color: #0B7DAB;
+  color: white;
+  border-radius:15px;
+  -moz-border-radius:15px;
+  -webkit-border-radius:15px;
+  border: none;
+  width:auto;
+  line-height: 3;
+  margin: 5px 5px;
+  white-space: nowrap;
+}
+
+// flip
+
+/* Latest compiled and minified CSS included as External Resource*/
+
+/* Optional theme */
+@import url('//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css');
+
+/*body{
+  padding-top:50px;
+}*/
+.flip {
+  -webkit-perspective: 800;
+  perspective: 800;
+
+  position: relative;
+
+}
+.flip .card.flipped {
+  -webkit-transform: rotatex(-180deg);
+  transform: rotatex(-180deg);
+}
+.flip .card {
+
+  height: 100%;
+  -webkit-transform-style: preserve-3d;
+  -webkit-transition: 0.5s;
+  transform-style: preserve-3d;
+  transition: 0.5s;
+}
+.flip .card .face {
+
+  -webkit-backface-visibility: hidden ;
+  backface-visibility: hidden ;
+  z-index: 2;
+
+}
+.flip .card .front {
+  position: absolute;
+  width: 100%;
+  z-index: 1;
+
+}
+.flip .card .back {
+  -webkit-transform: rotatex(-180deg);
+  transform: rotatex(-180deg);
+}
+.inner{margin:0px !important;}

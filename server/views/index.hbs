@@ -1,20 +1,45 @@
     <div id="wrapper" style="">
             <div class="container-fluid">
-                <div style="position: fixed;width: 100%;z-index: 9999;background: white;padding-top: 18px">
-                    <div id="container" style="display: inline-block;width: 75%; height: 150px; margin: 0 auto;z-index: 99999"></div>
-                    <div id="circle-container" style="display: inline-block;width: 130px; margin: 0 20px 20px 20px;z-index: 99999"></div>
-                    <!--<h3 style="width: 180px;padding-left: 10px;font-size: 18px"> Run Logs: </h3>-->
+                <!---->
+                <div class="container">
+                    <div class="flip">
+                        <div class="card">
+                            <div class="face front">
+                                    <div style="position: fixed;width: 100%;z-index: 9999;background: white;padding-top: 18px;height: 150px;">
+                                        <h3 style="text-align: center;margin-top: 0;padding-bottom: 30px;">Grid Logger - Client</h3>
+                                        <div class="location badgec" style="  max-height: 82px; overflow-y: hidden; margin: 0 40px; overflow-x: hidden;">
+                                            <span id="buildUrl">BuildURL: https://sim5runner.herokuapp.com/api/taskjson</span>
+                                            <span id="browser">Browser: Chrome</span>
+                                            <span id="host">Host: Hub</span>
+                                            <span id="username">Username: Abhishek</span>
+                                        </div>
+                                        <!--<h3 style="width: 180px;padding-left: 10px;font-size: 18px"> Run Logs: </h3>-->
+                                    </div>
+                            </div>
+                            <div class="face back">
+                                <!--<div class="well well-sm inner">-->
+                                    <div style="position: fixed;width: 100%;z-index: 9999;background: white;padding-top: 18px;">
+                                        <div id="container" style="display: inline-block;width: 75%; height: 150px; margin: 0 auto;z-index: 99999"></div>
+                                        <div id="circle-container" style="display: inline-block;width: 130px; margin: 0 20px 20px 20px;z-index: 99999"></div>
+                                    </div>
+                                <!--</div>-->
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+                <!---->
                 <div class="row" style="margin-top: 150px">
+
                     <div class="col-lg-12">
                         <code id="logs">
-                            <ul id="messages"></ul>
+                            <ul id="messages" style="padding-right: 40px"></ul>
                         </code>
                     </div>
                 </div>
             </div>
     </div>
-    <div  class="open" style="z-index: 99999">
+    <div  class="open" style="z-index: 99999;top: 20px">
         <span class="cls"></span>
 	    <span>
 		<ul class="sub-menu">
