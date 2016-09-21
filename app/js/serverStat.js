@@ -205,4 +205,5 @@ $(document).ready(function() {
 
 $('.flip').click(function(){
     $(this).find('.card').toggleClass('flipped');
+    $('#log-div').css('margin-top','150px');
 });
