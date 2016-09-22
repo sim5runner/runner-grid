@@ -38,8 +38,13 @@ exports.runTask = function (req, res) {
 
      POST: http://RunnerGrid:8080/sims/runtask
      */
-
+    //req.body.params.push("-DbrVersion=ANY");
     var cmd = req.body.command + ' ' + req.body.params.join(" ");
+
+    //add test to _runningTests
+    /**
+     * Add to current running tests.
+     */
 
     writeTestFile(req.body.task.filename,req.body.task.appName,req.body.task.java,req.body.task.xml,req.body.clientIp,
         function(){
@@ -75,6 +80,11 @@ exports.runTask = function (req, res) {
 
             ls.on('exit', function (code) {
                 console.log('run command exited with code ' + code);
+            });
+
+            ls.on('close', function(code) {
+                console.log('closing code: ' + code);
+            //  remove running test for req.body.clientIp from _runningTests
             });
 
             res.end("CMD_STARTED");

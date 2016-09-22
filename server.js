@@ -109,6 +109,8 @@ app.use(function(err, req, res, next){
 var http = require('http').Server(app);
 GLOBAL._io = require('socket.io')(http);
 
+GLOBAL._runningTests = [];
+
 /**
  * Start listening
  */
