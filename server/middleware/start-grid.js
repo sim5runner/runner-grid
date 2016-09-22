@@ -18,7 +18,7 @@ module.exports = function(app, config) {
             var ls;
 
             //todo: change dir path
-            var options = { cwd: "H:/runner-grid/server/lib",
+            var options = { cwd: _serverDirectory+"/server/lib",
                 env: process.env
             };
 
