@@ -38,14 +38,44 @@ exports.runTask = function (req, res) {
 
      POST: http://RunnerGrid:8080/sims/runtask
      */
-    //req.body.params.push("-DbrVersion=ANY");
+    // req.body.params.push("-DbrVersion=ANY");
     var cmd = req.body.command + ' ' + req.body.params.join(" ");
 
-    //add test to _runningTests
+    // add test to _runningTests
     /**
      * Add to current running tests.
      */
 
+/*    function getParamsByKey(params, key){
+
+        for (i in params){
+
+            var k = i.split("=")[0].replace("-","");
+            if(k.toLowerCase() == key.toLowerCase()){
+                return i.split("=")[1];
+            } else {
+                return "...";
+            }
+        }
+    };
+
+    var CurrentTestDetails = {
+        ip:req.body.clientIp,
+        details :{
+            buildUrl:getParamsByKey(req.body.params,'DbuildURL'),
+            browser:getParamsByKey(req.body.params,'DbrName'),
+            username:getParamsByKey(req.body.params,'Dnode'),
+            testCase:getParamsByKey(req.body.params,'DtestName'),
+            clientIp:req.body.clientIp
+        }
+    };
+
+    _runningTests.push(CurrentTestDetails);
+
+    console.log(_runningTests);*/
+    /**
+     * Executing tests
+     */
     writeTestFile(req.body.task.filename,req.body.task.appName,req.body.task.java,req.body.task.xml,req.body.clientIp,
         function(){
 
@@ -84,7 +114,7 @@ exports.runTask = function (req, res) {
 
             ls.on('close', function(code) {
                 console.log('closing code: ' + code);
-            //  remove running test for req.body.clientIp from _runningTests
+            //  todo: remove running test for req.body.clientIp from _runningTests
             });
 
             res.end("CMD_STARTED");

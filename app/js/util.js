@@ -52,3 +52,10 @@ $('.flip').click(function(){
     $(this).find('.card').toggleClass('flipped');
     $('#log-div').css('margin-top','150px');
 });
+
+/**
+ * Topband Updates
+ */
+
+// API call to get running test for particular ip
+
