@@ -13,7 +13,7 @@ exports.getData = function (req, res) {
 
 exports.getUserData = function (req, res) {
     res.json({"data_key": req.param.data_key,
-        "data_value": "test value"
+        "data_value": "test user data"
     });
 };
 

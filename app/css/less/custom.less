@@ -283,46 +283,6 @@ a{
   -o-transition: All 0.3s ease;
 };
 
-.topband-badge {
-  height: auto;
-  width: auto;
-  background: #292a2d;
-  padding: 10px 20px;
-  margin: 10px 20px;
-  color: white;
-  line-height: 3em;
-  white-space: nowrap;
-}
-
-div.location > span.holder {
-  position: absolute;
-  margin: 5px 8px;
-  color: #ddd;
-  cursor: auto;
-  font-family: Helvetica;
-  font-size: 11pt;
-  z-index: 1;
-}
-
-div.location > span.holder > span.blue{
-  color: #819FF7;
-}
-
-div.badgec > span {
-  padding:10px 10px;
-  font-size:11pt;
-  background-color: #31b0d5;
-  color: white;
-  border-radius:15px;
-  -moz-border-radius:15px;
-  -webkit-border-radius:15px;
-  border: none;
-  width:auto;
-  line-height: 3;
-  margin: 5px 5px;
-  white-space: nowrap;
-}
-
 // flip
 
 /* Latest compiled and minified CSS included as External Resource*/
@@ -394,7 +354,7 @@ hr:after {
 ;
 }
 
-// test metadata
+// test metadata topband
 
 .test-metadata {
   span {
@@ -409,4 +369,66 @@ hr:after {
     line-height: 1.8em;
     padding: 0 0 0 20px;
   }
+}
+
+#topband-contailer {
+  width: 90%;
+  min-width: 389px;
+  margin-right: 150px;
+}
+
+#log-div {
+  margin-top: 145px;
+}
+
+#messages {
+  padding-right: 40px
+}
+
+.open {
+  z-index: 99999;
+  top: 5px
+}
+
+.switch {
+  position: fixed;
+  right: 15px;
+  bottom: 10px
+}
+
+.flip-wrapper-front {
+  position: fixed;
+  width: 100%;
+  z-index: 9999;
+  background: white;
+  padding-top: 18px;
+  height: 125px;
+  border-bottom: 1px solid #53779f;
+
+  p{
+    text-align:center; font-size:18px;margin-top: 0;font-weight: normal;padding: 5px 0;background: #cdd5de;color: black;font-family: 'open sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  }
+}
+
+.flip-wrapper-back {
+  position: fixed;
+  width: 100%;
+  z-index: 9999;
+  background: white;
+  padding-top: 18px;
+}
+
+#container {
+  display: inline-block;
+  width: 75%;
+  height: 150px;
+  margin: 0 auto;
+  z-index: 99999
+}
+
+#circle-container {
+  display: inline-block;
+  width: 130px;
+  margin: 0 20px 20px 20px;
+  z-index: 99999
 }
