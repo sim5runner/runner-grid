@@ -130,9 +130,21 @@ var getServerIP = function() {
     return addresses;
 };
 
+var getUUID = function guid() {
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+        s4() + '-' + s4() + s4() + s4();
+};
+
+function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+};
+
 exports.portInUse = portInUse;
 exports.rmdirAsync = rmdirAsync;
 exports.mkdirParent = mkdirParent;
 exports.getDirFromXMlName = getDirFromXMlName;
 exports.getServerIP = getServerIP;
+exports.getUUID = getUUID;
 

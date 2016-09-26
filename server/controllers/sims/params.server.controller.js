@@ -4,7 +4,7 @@
 
 var util = require('../../utils')
 
-exports.mapRunParams = function(req) {
+exports.mapRunParams = function(req,currentTestId) {
 
     /**
      *
@@ -67,6 +67,22 @@ exports.mapRunParams = function(req) {
             task : req.task,
             clientIp: req.user.ip
         };
+
+    /**
+     * Adding test to active test list
+     */
+
+     var CurrentTestDetails = {
+         id:currentTestId,
+         ip:req.user.ip,
+         user:req.user,
+         run:req.run
+     };
+
+     _runningTests.push(CurrentTestDetails);
+
+     console.log(_runningTests);
+
 
     return outRequest;
 };

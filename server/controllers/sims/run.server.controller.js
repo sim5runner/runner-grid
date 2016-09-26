@@ -10,43 +10,12 @@ var paramsHandler = require('./params.server.controller')
 
 exports.runTask = function (req, res) {
 
-    var params = paramsHandler.mapRunParams(req.body);
+    var currentTestId = util.getUUID();
 
-    // req.body.params.push("-DbrVersion=ANY");
+    var params = paramsHandler.mapRunParams(req.body,currentTestId);
+
     var cmd = params.command;
 
-    // add test to _runningTests
-    /**
-     * Add to current running tests.
-     */
-
-/*    function getParamsByKey(params, key){
-
-        for (i in params){
-
-            var k = i.split("=")[0].replace("-","");
-            if(k.toLowerCase() == key.toLowerCase()){
-                return i.split("=")[1];
-            } else {
-                return "...";
-            }
-        }
-    };
-
-    var CurrentTestDetails = {
-        ip:req.body.clientIp,
-        details :{
-            buildUrl:getParamsByKey(req.body.params,'DbuildURL'),
-            browser:getParamsByKey(req.body.params,'DbrName'),
-            username:getParamsByKey(req.body.params,'Dnode'),
-            testCase:getParamsByKey(req.body.params,'DtestName'),
-            clientIp:req.body.clientIp
-        }
-    };
-
-    _runningTests.push(CurrentTestDetails);
-
-    console.log(_runningTests);*/
     /**
      * Executing tests
      */
@@ -89,6 +58,22 @@ exports.runTask = function (req, res) {
             ls.on('close', function(code) {
                 console.log('closing code: ' + code);
             //  todo: remove running test for req.body.clientIp from _runningTests
+
+                function removeTestFromRunningList(arr) {
+                    var what, a = arguments, L = a.length, ax, i=0;
+                    while (L > 1 && arr.length) {
+                        what = a[--L];
+                        for (var i=arr.length-1; i>=0; i--) {
+                            if(arr[i].id === what.id){
+                                arr.splice(i, 1);
+                            }
+                        }
+                    }
+                    return arr;
+                };
+
+                removeTestFromRunningList(_runningTests, {id:currentTestId});
+
             });
 
             res.end("CMD_STARTED");

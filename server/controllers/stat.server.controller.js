@@ -13,3 +13,12 @@ exports.serverUsage = function (req, res) {
         }
     });
 };
+
+exports.runningTests = function (req, res) {
+    res.json({
+        total: _runningTests.length,
+        tests:_runningTests
+    });
+};
+
+
