@@ -6,8 +6,11 @@
 var util = require('../../utils');
 var fs = require('fs');
 var mkdirp = require('mkdirp');
+var paramsHandler = require('./params.server.controller')
 
 exports.runTask = function (req, res) {
+
+    var params = paramsHandler.mapRunParams(req.body);
 
     /**
      * todo:
@@ -20,7 +23,8 @@ exports.runTask = function (req, res) {
 
     post data json format
 
-    {"command": "mvn test",
+    {
+    "command": "mvn test",
     "params": [
 		"-DtestName=word.Test_GO16_WD_04_4A_01_A1",
 		"-DbrName=firefox",
@@ -39,7 +43,7 @@ exports.runTask = function (req, res) {
      POST: http://RunnerGrid:8080/sims/runtask
      */
     // req.body.params.push("-DbrVersion=ANY");
-    var cmd = req.body.command + ' ' + req.body.params.join(" ");
+    var cmd = params.command;
 
     // add test to _runningTests
     /**
@@ -76,16 +80,16 @@ exports.runTask = function (req, res) {
     /**
      * Executing tests
      */
-    writeTestFile(req.body.task.filename,req.body.task.appName,req.body.task.java,req.body.task.xml,req.body.clientIp,
+    writeTestFile(params.task.filename,params.task.appName,params.task.java,params.task.xml,params.clientIp,
         function(){
 
-            console.log('Client: '+req.body.clientIp);
+            console.log('Client: '+params.clientIp);
             console.log('running command ' + cmd);
 
-            _io.emit(req.body.clientIp, 'Client: '+req.body.clientIp);
-            _io.emit(req.body.clientIp, 'Requested: ');
-            _io.emit(req.body.clientIp, JSON.stringify(req.body));
-            _io.emit(req.body.clientIp, 'Running command ' + cmd);
+            _io.emit(params.clientIp, 'Client: '+params.clientIp);
+            _io.emit(params.clientIp, 'Requested: ');
+            _io.emit(params.clientIp, JSON.stringify(params));
+            _io.emit(params.clientIp, 'Running command ' + cmd);
 
             var process = require('child_process');
             var ls;
@@ -99,12 +103,12 @@ exports.runTask = function (req, res) {
 
             ls.stdout.on('data', function(data){
                 // todo: preserve logs
-                _io.emit(req.body.clientIp, '<span style="color: black">' + util.ab2str(data) + '</span>');
+                _io.emit(params.clientIp, '<span style="color: black">' + util.ab2str(data) + '</span>');
                 //console.log(util.ab2str(data));
             })
 
             ls.stderr.on('data', function (data) {
-                _io.emit(req.body.clientIp, '<span style="color: red">' + util.ab2str(data) + '</span>');
+                _io.emit(params.clientIp, '<span style="color: red">' + util.ab2str(data) + '</span>');
                 console.log(util.ab2str(data));
             });
 
@@ -120,8 +124,8 @@ exports.runTask = function (req, res) {
             res.end("CMD_STARTED");
         },
         function(er) {
-            _io.emit(req.body.clientIp, 'client: '+req.body.clientIp);
-            _io.emit(req.body.clientIp, '<span style="color: red">' + er + '</span>');
+            _io.emit(params.clientIp, 'client: '+params.clientIp);
+            _io.emit(params.clientIp, '<span style="color: red">' + er + '</span>');
             res.end("ERROR");
         }
     )
@@ -133,7 +137,7 @@ function writeTestFile(filename,appName,java,xml,clientIp,done, err){
 
     var _taskXmlPath = util.getDirFromXMlName(filename);
 
-    var xmlDirectory = (_serverDirectory+"/server/lib/jf/src/test/resources/taskXML" + _taskXmlPath);
+    var xmlDirectory = (_serverDirectory + "/server/lib/jf/src/test/resources/taskXML" + _taskXmlPath);
     var xmlfilepath = xmlDirectory + "/" + filename + '.xml';
 
     var javafilepath = (_serverDirectory+"/server/lib/jf/src/test/java/testcase/"+appName + "/Test_" + filename + '.java');

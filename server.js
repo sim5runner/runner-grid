@@ -71,7 +71,7 @@ app.use(expressValidator());
 /**
  * Express WWW Server
  */
-let port = process.env.PORT || 9001;
+let port = process.env.PORT || 9002;
 // Serve Bower Components based JS & CSS & Image assets
 app.use("/bower_components", express.static(__dirname + '/bower_components'));
 
@@ -91,7 +91,7 @@ require("./server/routes")(app, config);
 require("./server/middleware/mongoose")(app, config);
 
 require("./server/middleware/start-grid")(app, config);
-require("./server/middleware/clone-jf")(app, config);
+// require("./server/middleware/clone-jf")(app, config); // todo: change to svn checkout after scripts have been removed
 
 /**
  * Error handling
