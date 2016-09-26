@@ -38,7 +38,6 @@ exports.mapRunParams = function(req) {
         }
      *
      */
-    mvn clean test -DtestName=ppt.Test_EXP16_PPT_01_01_01_A1 -Dhost=hub -DbrName=chrome -DbrVersion=ANY -Dnode=anu -Dos=WIN10 -DhubIp=loadrunner1 -DhubPort=4444
         var serverIP = util.getServerIP();
         var runParams = [];
 
