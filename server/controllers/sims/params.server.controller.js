@@ -2,6 +2,7 @@
  * Created by AbhishekK on 9/26/2016.
  */
 
+var util = require('../../utils')
 
 exports.mapRunParams = function(req) {
 
@@ -36,37 +37,29 @@ exports.mapRunParams = function(req) {
 			}
         }
      *
-     *
-     *
-     "params": [
-     "-DtestName=word.Test_GO16_WD_04_4A_01_A1",
-     "-DbrName=firefox",
-     "-DbrVersion=ANY", // for hub
-     "-Dnode=abhi",
-     "-DhubIp=192.168.1.200",
-     "-DhubPort=4444",
-     "-Dhost=hub/local/saucelabs"
-     ],
      */
 
+        var serverIP = util.getServerIP();
         var runParams = [];
 
         runParams.push('mvn test');
-        runParams.push(('DtestName='+req.task.appName.toLowerCase()+'.Test_'+req.task.filename));
-        runParams.push(('DbrName='+req.run.browser.name.toLowerCase()));
+        runParams.push(('-DtestName='+req.task.appName.toLowerCase()+'.Test_'+req.task.filename));
+        runParams.push(('-DbrName='+req.run.browser.name.toLowerCase()));
 
         if(req.run.env.toLowerCase() === 'saucelabs'){  // todo push other saucelabs config
             runParams.push('-Dhost=saucelabs');
             runParams.push(('-DbrVersion='+req.run.browser.version));
         } else {
             runParams.push('-Dhost=hub');
-            runParams.push(('Dnode='+req.run.browser.node));
+            runParams.push(('-Dnode='+req.run.browser.node));
             runParams.push('-DbrVersion=ANY');
-            runParams.push('-DhubIp=192.168.1.22'); // todo: set dynamically for deployed machine, currently for loadrunner1
+            console.log('-DhubIp='+serverIP[0]+'');
+            runParams.push('-DhubIp='+serverIP[0]+''); // todo: set dynamically for deployed machine, currently for loadrunner1
             runParams.push('-DhubPort=4444');
         }
 
         var command = runParams.join(" ");
+        console.log('command: ' + command);
 
         var outRequest = {
             command :command,

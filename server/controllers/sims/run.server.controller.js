@@ -12,36 +12,6 @@ exports.runTask = function (req, res) {
 
     var params = paramsHandler.mapRunParams(req.body);
 
-    /**
-     * todo:
-     * 1. establish 2way connection with client
-     * 2. validate & save request data
-     * 3. write files to lib/jf
-     * 4. run mvn command
-     * 5. show logs
-     * 6. option to stop test
-
-    post data json format
-
-    {
-    "command": "mvn test",
-    "params": [
-		"-DtestName=word.Test_GO16_WD_04_4A_01_A1",
-		"-DbrName=firefox",
-		"-Dnode=abhi",
-		"-DhubIp=192.168.1.200",
-		"-DhubPort=4444"
-    ],
-    "task": {
-			"filename": "Test_GO16_WD_04_4A_01_A1",
-			"xml": "xml file content",
-			"java": "java file content"
-			},
-    "clientIp" : "192.168.1.97"
-    }
-
-     POST: http://RunnerGrid:8080/sims/runtask
-     */
     // req.body.params.push("-DbrVersion=ANY");
     var cmd = params.command;
 
@@ -88,7 +58,7 @@ exports.runTask = function (req, res) {
 
             _io.emit(params.clientIp, 'Client: '+params.clientIp);
             _io.emit(params.clientIp, 'Requested: ');
-            _io.emit(params.clientIp, JSON.stringify(params));
+            _io.emit(params.clientIp, JSON.stringify(req.body));
             _io.emit(params.clientIp, 'Running command ' + cmd);
 
             var process = require('child_process');
@@ -104,7 +74,7 @@ exports.runTask = function (req, res) {
             ls.stdout.on('data', function(data){
                 // todo: preserve logs
                 _io.emit(params.clientIp, '<span style="color: black">' + util.ab2str(data) + '</span>');
-                //console.log(util.ab2str(data));
+                console.log(util.ab2str(data));
             })
 
             ls.stderr.on('data', function (data) {
