@@ -23,6 +23,10 @@ $(document).ready(function() {
 
 $("#grid-url").attr('href', location.protocol+'//'+location.hostname + ':4444/grid/console');
 
+var baseUrl = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port : '');
+$("#active-tests").attr('href', baseUrl + '/stat/tests');
+
+
 $(document).ready(function() {
     $(document).delegate('.open', 'click', function(event){
         $(this).addClass('oppenned');
