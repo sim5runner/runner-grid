@@ -83,6 +83,5 @@ exports.mapRunParams = function(req,currentTestId) {
 
      console.log(_runningTests);
 
-
     return outRequest;
 };

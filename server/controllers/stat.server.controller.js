@@ -3,7 +3,7 @@
  */
 'use strict';
 const os = require('os');
-
+var util = require('../utils')
 exports.serverUsage = function (req, res) {
     res.json({
         memory:{
@@ -20,5 +20,17 @@ exports.runningTests = function (req, res) {
         tests:_runningTests
     });
 };
+
+exports.runningTest = function (req, res) {
+
+    var ip = req.param.clientip;
+
+    var ret = util.searchNodeInArray(_runningTests,{ip:ip});
+    res.json({
+        test:ret
+    });
+};
+
+
 
 

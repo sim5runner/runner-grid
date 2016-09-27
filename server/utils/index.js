@@ -141,10 +141,36 @@ function s4() {
         .substring(1);
 };
 
+var searchNodeInArray = function searchNodeInArray(arr) {
+    var what, a = arguments, L = a.length,ret = [];
+    while (L > 1 && arr.length) {
+        what = a[--L];
+        for (var i=arr.length-1; i>=0; i--) {
+            if(JSON.stringify(arr[i]).indexOf((JSON.stringify(what)).substring(1, (JSON.stringify(what)).length-1)) !=-1){
+                ret.push(arr[i])
+            }
+        }
+    }
+    return ret;
+};
+
+
+function objectsAreSame(x, y) {
+    var objectsAreSame = true;
+    for(var propertyName in x) {
+        if(x[propertyName] !== y[propertyName]) {
+            objectsAreSame = false;
+            break;
+        }
+    }
+    return objectsAreSame;
+};
+
 exports.portInUse = portInUse;
 exports.rmdirAsync = rmdirAsync;
 exports.mkdirParent = mkdirParent;
 exports.getDirFromXMlName = getDirFromXMlName;
 exports.getServerIP = getServerIP;
 exports.getUUID = getUUID;
+exports.searchNodeInArray = searchNodeInArray;
 

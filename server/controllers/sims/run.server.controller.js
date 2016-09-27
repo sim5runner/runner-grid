@@ -43,12 +43,12 @@ exports.runTask = function (req, res) {
             ls.stdout.on('data', function(data){
                 // todo: preserve logs
                 _io.emit(params.clientIp, '<span style="color: black">' + util.ab2str(data) + '</span>');
-                console.log(util.ab2str(data));
+                //console.log(util.ab2str(data));
             })
 
             ls.stderr.on('data', function (data) {
                 _io.emit(params.clientIp, '<span style="color: red">' + util.ab2str(data) + '</span>');
-                console.log(util.ab2str(data));
+                //console.log(util.ab2str(data));
             });
 
             ls.on('exit', function (code) {
