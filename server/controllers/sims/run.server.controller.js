@@ -6,11 +6,16 @@
 var util = require('../../utils');
 var fs = require('fs');
 var mkdirp = require('mkdirp');
-var paramsHandler = require('./params.server.controller')
+var paramsHandler = require('./params.server.controller');
 
 exports.runTask = function (req, res) {
 
+    // todo: add validation for incoming json
+
     var currentTestId = util.getUUID();
+    _io.emit(req.body.user.ip, 'Client: '+req.body.user.ip);
+    _io.emit(req.body.user.ip, 'Requested: ');
+    _io.emit(req.body.user.ip, JSON.stringify(req.body));
 
     var params = paramsHandler.mapRunParams(req.body,currentTestId);
 
@@ -25,9 +30,6 @@ exports.runTask = function (req, res) {
             console.log('Client: '+params.clientIp);
             console.log('running command ' + cmd);
 
-            _io.emit(params.clientIp, 'Client: '+params.clientIp);
-            _io.emit(params.clientIp, 'Requested: ');
-            _io.emit(params.clientIp, JSON.stringify(req.body));
             _io.emit(params.clientIp, 'Running command ' + cmd);
 
             var process = require('child_process');

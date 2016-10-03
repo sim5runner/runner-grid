@@ -44,11 +44,11 @@ exports.mapRunParams = function(req,currentTestId) {
         runParams.push('mvn test');
         runParams.push(('-DtestName='+req.task.appName.toLowerCase()+'.Test_'+req.task.filename));
         runParams.push(('-DbrName='+req.run.browser.name.toLowerCase()));
+        runParams.push(('-Dos='+req.run.os));
 
         if(req.run.env.toLowerCase() === 'saucelabs'){  // todo push other saucelabs config
             runParams.push('-Dhost=saucelabs');
             runParams.push(('-DbrVersion='+req.run.browser.version));
-            runParams.push(('-Dos='+req.run.os));
 
         } else {
             runParams.push('-Dhost=hub');
