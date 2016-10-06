@@ -114,8 +114,63 @@ var getDirFromXMlName = function(taskXMLName){
     }
 };
 
+var getServerIP = function() {
+    var os = require('os');
+
+    var interfaces = os.networkInterfaces();
+    var addresses = [];
+    for (var k in interfaces) {
+        for (var k2 in interfaces[k]) {
+            var address = interfaces[k][k2];
+            if (address.family === 'IPv4' && !address.internal) {
+                addresses.push(address.address);
+            }
+        }
+    }
+    return addresses;
+};
+
+var getUUID = function guid() {
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+        s4() + '-' + s4() + s4() + s4();
+};
+
+function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+};
+
+var searchNodeInArray = function searchNodeInArray(arr) {
+    var what, a = arguments, L = a.length,ret = [];
+    while (L > 1 && arr.length) {
+        what = a[--L];
+        for (var i=arr.length-1; i>=0; i--) {
+            if(JSON.stringify(arr[i]).indexOf((JSON.stringify(what)).substring(1, (JSON.stringify(what)).length-1)) !=-1){
+                ret.push(arr[i])
+            }
+        }
+    }
+    return ret;
+};
+
+
+function objectsAreSame(x, y) {
+    var objectsAreSame = true;
+    for(var propertyName in x) {
+        if(x[propertyName] !== y[propertyName]) {
+            objectsAreSame = false;
+            break;
+        }
+    }
+    return objectsAreSame;
+};
+
 exports.portInUse = portInUse;
 exports.rmdirAsync = rmdirAsync;
 exports.mkdirParent = mkdirParent;
 exports.getDirFromXMlName = getDirFromXMlName;
+exports.getServerIP = getServerIP;
+exports.getUUID = getUUID;
+exports.searchNodeInArray = searchNodeInArray;
 

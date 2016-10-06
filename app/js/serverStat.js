@@ -75,7 +75,6 @@ $(function () {
                         marginRight: 10,
                         events: {
                             load: function () {
-
                                 // set up the updating of the chart each second
                                 var series = this.series[0];
                                 setInterval(function () {
@@ -148,7 +147,6 @@ $(function () {
                     }]
                 });
 
-
             } catch (er){
                 console.log(err);
             }
@@ -156,3 +154,80 @@ $(function () {
 
     });
 });
+
+
+/**
+ * Updating topband test metadata
+ *
+ * {
+"id": "be87ff2a-5476-d4e7-bc7e-acb62e0f13f6",
+"ip": "192.168.1.200",
+"user": {
+"name": "abhishek",
+"ip": "192.168.1.200"
+},
+"run": {
+"env": "hub",
+"os": "",
+"resolution": "",
+"app": {
+"url": "http://grader13/qatrunk/SIM5Frame.aspx",
+"public": "false",
+"build": ""
+},
+"browser": {
+"node": "abhishek",
+"name": "chrome",
+"version": "46"
+}
+}
+}
+ */
+
+/*location.reload(
+
+
+
+
+
+
+
+);*/
+function getTestMetadata() {
+    $.get(baseUrl+"/stat/tests/"+_clientIp, function(data, status){
+        console.log(data)
+        var currentTest;
+        try{
+            if(data.test){
+                currentTest = data.test[0];
+                console.log(currentTest);
+            }
+        } catch (er){
+            console.log(er);
+        }
+
+        // update ui
+        if(currentTest){
+            $('#buildUrl').html('&#x2756;&nbsp;BuildURL: ' +currentTest.run.app.url);
+            $('#browser').html('&#x2756;&nbsp;Browser: '+currentTest.run.browser.name);
+            $('#host').html('&#x2756;&nbsp;Host: '+currentTest.run.env);
+            $('#username').html('&#x2756;&nbsp;Username: '+currentTest.user.name);
+            $('#clientIp').html('&#x2756;&nbsp;Client IP: '+currentTest.user.ip);
+            clearInterval(timer);
+        } else {
+            $('#buildUrl').html('&#x2756;&nbsp;BuildURL: ...');
+            $('#browser').html('&#x2756;&nbsp;Browser: ...');
+            $('#host').html('&#x2756;&nbsp;Host: ...');
+            $('#username').html('&#x2756;&nbsp;Username: ...');
+            $('#clientIp').html('&#x2756;&nbsp;Client IP: ...');
+        }
+    })
+};
+
+setTimeout(function () {
+    getTestMetadata();
+}, 2000);
+
+var timer = setInterval(function () {
+getTestMetadata();
+}, 10000);

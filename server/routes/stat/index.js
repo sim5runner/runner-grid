@@ -16,6 +16,8 @@ var stat = require('../../controllers/stat.server.controller');
 
 // add data: error on existing data key for user
 apirouter.get('/server', stat.serverUsage);
+apirouter.get('/tests', stat.runningTests);
+apirouter.get('/tests/:clientip', stat.runningTest);
 
 module.exports = apirouter;
 

@@ -91,7 +91,7 @@ require("./server/routes")(app, config);
 require("./server/middleware/mongoose")(app, config);
 
 require("./server/middleware/start-grid")(app, config);
-require("./server/middleware/clone-jf")(app, config);
+// require("./server/middleware/clone-jf")(app, config); // todo: change to svn checkout after scripts have been removed
 
 /**
  * Error handling

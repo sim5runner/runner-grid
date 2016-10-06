@@ -31,6 +31,7 @@ if (RTCPeerConnection) (function () {
         var displayAddrs = Object.keys(addrs).filter(function (k) { return addrs[k]; });
         //document.getElementById('list').textContent = displayAddrs.join(" or perhaps ") || "n/a";
 
+        _clientIp = displayAddrs[0];
         console.log(displayAddrs[0]);
         /**
          * socket connection
