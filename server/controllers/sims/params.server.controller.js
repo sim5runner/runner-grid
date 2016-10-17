@@ -30,11 +30,17 @@ exports.mapRunParams = function(req,currentTestId) {
 				}
 		},
 		"task": {
-			"filename": "GO16_WD_04_4A_01_A1",
+			"filename": "GO16_WD_04_4A_01_A1",  // todo: corresponding update in post json in scriptor
 			"appName" : "word",
 			"xml": "xml file content",
-			"java": "java file content"
+			"java": "java file content",
+			"commit":"true"
 			}
+        "svn": {
+            "url": "",
+            "username":"",
+            "password":""
+            }
         }
      *
      */
@@ -42,7 +48,7 @@ exports.mapRunParams = function(req,currentTestId) {
         var runParams = [];
 
         runParams.push('mvn test');
-        runParams.push(('-DtestName='+req.task.appName.toLowerCase()+'.Test_'+req.task.filename));
+        runParams.push(('-DtestName='+req.task.appName.toLowerCase()+'.Test_'+req.task.filename)); // todo: check if filename require / contains any extension
         runParams.push(('-DbrName='+req.run.browser.name.toLowerCase()));
         runParams.push(('-Dos='+req.run.os));
 
@@ -65,7 +71,8 @@ exports.mapRunParams = function(req,currentTestId) {
         var outRequest = {
             command :command,
             task : req.task,
-            clientIp: req.user.ip
+            clientIp: req.user.ip,
+            svn: req.svn
         };
 
     /**
