@@ -108,7 +108,13 @@ exports.mapRunParams = function(req,currentTestId,done) {
                         }
                     )
                 } else {
-                    client.update(function(err, data) {
+                    _io.emit(req.user.ip, 'Svn Cleanup..');
+                    console.log(outRequest);
+                    //return outRequest;
+                    done(outRequest);
+
+                    // todo: commented svn update - > might conflict / overwrite running tests
+/*                    client.update(function(err, data) {
                         if(err){
                             _io.emit(req.user.ip, 'Svn Update Error');
                             console.log('svn update error');
@@ -118,7 +124,7 @@ exports.mapRunParams = function(req,currentTestId,done) {
                         console.log(outRequest);
 						//return outRequest;
                         done(outRequest);
-                    });
+                    });*/
                 }
             });
 			
