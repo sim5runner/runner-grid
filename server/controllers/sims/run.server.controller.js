@@ -23,24 +23,23 @@ exports.runTask = function (req, res) {
 
         writeTestFile(params.task.filename,params.task.appName,params.task.java,params.task.xml,params.clientIp,
             function(){
-                console.log("params.task.commit "+ params.task.commit +params.task.commit.toString() + (params.task.commit.toString() === 'true'));
                 if (params.task.commit.toString() === 'true') {
                     /**
                      * if commit
                      */
-                    _io.emit(params.clientIp, "Commit files to SVN.");
+                    _io.emit(params.clientIp + '-svn', "Commit files to SVN - " + params.task.filename);
                     commitFileToSvn(params.task.filename, params.svn.username, params.svn.password, params.svn.url, params.task.appName, res,
                         function(success){ // success
                             console.log("Files committed successfully");
-                            _io.emit(params.clientIp, "Files committed successfully");
+                            _io.emit(params.clientIp + '-svn', '<span style="color: green">Files committed successfully</span>');
                             res.json(
                                 {
                                     error:"false",
                                     msg:"Files committed successfully"
                                 }
                             );
-                        },function(err){ // failure
-                            _io.emit(params.clientIp, '<span style="color: red">Error in pushing files to svn</span>');
+                        },function(failure){ // failure
+                            _io.emit(params.clientIp + '-svn', '<span style="color: red">Error in pushing files to svn.</span>');
                             res.json(
                                 {
                                     error:"true",
@@ -191,7 +190,7 @@ function writeTestFile(filename,appName,java,xml,clientIp,done, err){
     console.log('writing.. '+ filename);
 };
 
-function commitFileToSvn(_filename,user, pass, svnUrl, app, res, success, err){
+function commitFileToSvn(_filename,user, pass, svnUrl, app, res, success, failure){
     var _taskXmlPath = util.getDirFromXMlName(_filename);
 
     var javaFilePath = '/src/test/java/testcase/' + app + '/'+ 'Test_' + _filename + '.java';
@@ -223,39 +222,19 @@ function commitFileToSvn(_filename,user, pass, svnUrl, app, res, success, err){
             client.add(_serverDirectory + '/server/lib/jf' + javaFilePath, function(err, data) {
                 if (err) {
                     if(otherCompleted) {
-                        res.json(
-                            {
-                                error:"true",
-                                msg:"Error in commiting files"
-                            }
-                        )
+                        failure();
                     } else {otherCompleted = true;commiterr=true;}
                 } else {
                     client.commit(['SIMS-0000', (_serverDirectory + '/server/lib/jf' + javaFilePath)], function(err, data) {
                         if (err) {
                             if(otherCompleted) {
-                                res.json(
-                                    {
-                                        error:"true",
-                                        msg:"Error in commiting files"
-                                    }
-                                )
+                                failure();
                             } else {otherCompleted = true;commiterr=true;}
                         }
                         if(otherCompleted && (!commiterr)) {
-                            res.json(
-                                {
-                                    error:"false",
-                                    msg:"Files commited successfully"
-                                }
-                            )
+                            success();
                         } else if(otherCompleted && commiterr) {
-                            res.json(
-                                {
-                                    error:"true",
-                                    msg:"Error in commiting files"
-                                }
-                            )
+                            failure();
                         } else {otherCompleted = true;}
                     });
                 }
@@ -263,19 +242,9 @@ function commitFileToSvn(_filename,user, pass, svnUrl, app, res, success, err){
             });
         } else {
             if(otherCompleted && (!commiterr)) {
-                res.json(
-                    {
-                        error:"false",
-                        msg:"Files commited successfully"
-                    }
-                )
+                success();
             } else if(otherCompleted && commiterr) {
-                res.json(
-                    {
-                        error:"true",
-                        msg:"Error in commiting files"
-                    }
-                )
+                failure();
             } else {otherCompleted = true;}
         }
 
@@ -289,58 +258,28 @@ function commitFileToSvn(_filename,user, pass, svnUrl, app, res, success, err){
             client.add(_serverDirectory + '/server/lib/jf' + xmlFilePath, function(err, data) {
                 if (err) {
                     if(otherCompleted) {
-                        res.json(
-                            {
-                                error:"true",
-                                msg:"Error in commiting files"
-                            }
-                        )
+                        failure();
                     } else {otherCompleted = true;commiterr=true;}
                 } else {
                     client.commit(['SIMS-0000', (_serverDirectory + '/server/lib/jf' + xmlFilePath)], function(err, data) {
                         if (err) {
                             if(otherCompleted) {
-                                res.json(
-                                    {
-                                        error:"true",
-                                        msg:"Error in commiting files"
-                                    }
-                                )
+                                failure();
                             } else {otherCompleted = true;commiterr=true;}
                         }
                         if(otherCompleted && (!commiterr)) {
-                            res.json(
-                                {
-                                    error:"false",
-                                    msg:"Files commited successfully"
-                                }
-                            )
+                            success();
                         } else if(otherCompleted && commiterr) {
-                            res.json(
-                                {
-                                    error:"true",
-                                    msg:"Error in commiting files"
-                                }
-                            )
+                            failure();
                         } else {otherCompleted = true;}
                     });
                 }
             });
         } else {
             if(otherCompleted && (!commiterr)) {
-                res.json(
-                    {
-                        error:"false",
-                        msg:"Files commited successfully"
-                    }
-                )
+                success();
             } else if(otherCompleted && commiterr) {
-                res.json(
-                    {
-                        error:"true",
-                        msg:"Error in commiting files"
-                    }
-                )
+                failure();
             } else {otherCompleted = true;}
         }
 

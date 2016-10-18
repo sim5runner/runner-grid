@@ -16,4 +16,11 @@ webrouter.get('/stat', function(req, res) {
     res.render('stat',{ username: 'grid-server', name: 'grid-server' });
 });
 
+webrouter.get('/svn', function(req, res) {
+    res.setHeader('Cache-control', ['no-cache','no-store','must-revalidate']);
+    res.setHeader('Pragma', 'no-cache');
+    res.render('svn',{ username: 'grid-server', name: 'grid-server' });
+});
+
+
 module.exports = webrouter;

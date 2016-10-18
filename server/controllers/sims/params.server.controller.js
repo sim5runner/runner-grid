@@ -100,7 +100,7 @@ exports.mapRunParams = function(req,currentTestId,done) {
 			
             client.cmd(['cleanup'], function(err, data) {
                 if (err) {
-                    _io.emit(req.user.ip, 'Svn Cleanup Error');
+                    _io.emit(req.user.ip + '-svn', 'Svn Cleanup Error');
                     res.json(
                         {
                             error:"true",
@@ -108,7 +108,7 @@ exports.mapRunParams = function(req,currentTestId,done) {
                         }
                     )
                 } else {
-                    _io.emit(req.user.ip, 'Svn Cleanup..');
+                    _io.emit(req.user.ip + '-svn', 'Svn Cleanup..');
                     console.log(outRequest);
                     //return outRequest;
                     done(outRequest);
@@ -116,11 +116,11 @@ exports.mapRunParams = function(req,currentTestId,done) {
                     // todo: commented svn update - > might conflict / overwrite running tests
 /*                    client.update(function(err, data) {
                         if(err){
-                            _io.emit(req.user.ip, 'Svn Update Error');
+                            _io.emit(req.user.ip + '-svn', 'Svn Update Error');
                             console.log('svn update error');
                             // todo: add command to cleanup and retry
                         }
-                        _io.emit(req.user.ip, 'Svn Cleanup & Update..');
+                        _io.emit(req.user.ip + '-svn', 'Svn Cleanup & Update..');
                         console.log(outRequest);
 						//return outRequest;
                         done(outRequest);
