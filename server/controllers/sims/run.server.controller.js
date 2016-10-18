@@ -7,130 +7,135 @@ var util = require('../../utils');
 var fs = require('fs');
 var mkdirp = require('mkdirp');
 var paramsHandler = require('./params.server.controller');
+var Client = require('svn-spawn');
 
 exports.runTask = function (req, res) {
 
     var currentTestId = util.getUUID();
-    _io.emit(req.body.user.ip, 'Client: '+req.body.user.ip);
-    _io.emit(req.body.user.ip, 'Requested: ');
-    _io.emit(req.body.user.ip, JSON.stringify(req.body));
+    _io.emit(req.body.user.ip, 'Client: '+req.body.user.ip + ' requested.');
 
-    var params = paramsHandler.mapRunParams(req.body,currentTestId);
+    paramsHandler.mapRunParams(req.body,currentTestId, function(params){ // mapping params
 
-    var cmd = params.command;
+        /**
+         * Handling user request for run / commit
+         *
+         */
 
-    /**
-     * Handling Tests and Commit
-     */
-    writeTestFile(params.task.filename,params.task.appName,params.task.java,params.task.xml,params.clientIp,
-        function(){
-
-            if (params.task.commit === true) {
-                /**
-                 * if commit
-                 */
-
-                commitFileToSvn(params.task.filename, params.svn.username, params.svn.password, params.svn.url, params.task.appName, res,
-                    function(success){ // success
-                        console.log("Files committed successfully");
-                        res.json(
-                            {
-                                error:"false",
-                                msg:"Files committed successfully"
-                            }
-                        );
-                    },function(err){ // failure
-                        res.json(
-                            {
-                                error:"true",
-                                msg:"Error in pushing files to svn"
-                            }
-                        );
-                    });
-
-            }
-            else {
-                /**
-                 * else run and return
-                 */
-
-                console.log('Client: '+params.clientIp);
-                console.log('running command ' + cmd);
-
-                _io.emit(params.clientIp, 'Running command ' + cmd);
-
-                var process = require('child_process');
-                var ls;
-
-                //todo: change dir path
-                var options = { cwd: (_serverDirectory+"/server/lib/jf"),
-                    env: process.env
-                };
-
-                ls = process.spawn('cmd.exe', ['/c', cmd], options);
-
-                ls.stdout.on('data', function(data){
-                    // todo: preserve logs
-                    _io.emit(params.clientIp, '<span style="color: black">' + util.ab2str(data) + '</span>');
-                    //console.log(util.ab2str(data));
-                });
-
-                ls.stderr.on('data', function (data) {
-                    _io.emit(params.clientIp, '<span style="color: red">' + util.ab2str(data) + '</span>');
-                    //console.log(util.ab2str(data));
-                });
-
-                ls.on('exit', function (code) {
-                    console.log('run command exited with code ' + code);
-                });
-
-                ls.on('close', function(code) {
-                    console.log('closing code: ' + code);
-                    //  todo: remove running test for req.body.clientIp from _runningTests
-
-                    function removeTestFromRunningList(arr) {
-                        var what, a = arguments, L = a.length, ax, i=0;
-                        while (L > 1 && arr.length) {
-                            what = a[--L];
-                            for (var i=arr.length-1; i>=0; i--) {
-                                if(arr[i].id === what.id){
-                                    arr.splice(i, 1);
+        writeTestFile(params.task.filename,params.task.appName,params.task.java,params.task.xml,params.clientIp,
+            function(){
+                console.log("params.task.commit "+ params.task.commit +params.task.commit.toString() + (params.task.commit.toString() === 'true'));
+                if (params.task.commit.toString() === 'true') {
+                    /**
+                     * if commit
+                     */
+                    _io.emit(params.clientIp, "Commit files to SVN.");
+                    commitFileToSvn(params.task.filename, params.svn.username, params.svn.password, params.svn.url, params.task.appName, res,
+                        function(success){ // success
+                            console.log("Files committed successfully");
+                            _io.emit(params.clientIp, "Files committed successfully");
+                            res.json(
+                                {
+                                    error:"false",
+                                    msg:"Files committed successfully"
                                 }
-                            }
-                        }
-                        return arr;
+                            );
+                        },function(err){ // failure
+                            _io.emit(params.clientIp, '<span style="color: red">Error in pushing files to svn</span>');
+                            res.json(
+                                {
+                                    error:"true",
+                                    msg:"Error in pushing files to svn"
+                                }
+                            );
+                        });
+
+                }
+                else {
+                    /**
+                     * else run and return
+                     */
+
+                    var cmd = params.command;
+
+                    _io.emit(params.clientIp, JSON.stringify(req.body));
+                    console.log('Client: '+params.clientIp);
+                    console.log('running command ' + cmd);
+
+                    _io.emit(params.clientIp, 'Running command ' + cmd);
+
+                    var process = require('child_process');
+                    var ls;
+
+                    var options = { cwd: (_serverDirectory+"/server/lib/jf"),
+                        env: process.env
                     };
 
-                    removeTestFromRunningList(_runningTests, {id:currentTestId});
+                    ls = process.spawn('cmd.exe', ['/c', cmd], options);
 
-                });
+                    ls.stdout.on('data', function(data){
+                        // todo: preserve logs
+                        _io.emit(params.clientIp, '<span style="color: black">' + util.ab2str(data) + '</span>');
+                        //console.log(util.ab2str(data));
+                    });
 
-                res.end(
+                    ls.stderr.on('data', function (data) {
+                        _io.emit(params.clientIp, '<span style="color: red">' + util.ab2str(data) + '</span>');
+                        //console.log(util.ab2str(data));
+                    });
+
+                    ls.on('exit', function (code) {
+                        console.log('run command exited with code ' + code);
+                    });
+
+                    ls.on('close', function(code) {
+                        console.log('closing code: ' + code);
+
+                        function removeTestFromRunningList(arr) {
+                            var what, a = arguments, L = a.length, ax, i=0;
+                            while (L > 1 && arr.length) {
+                                what = a[--L];
+                                for (var i=arr.length-1; i>=0; i--) {
+                                    if(arr[i].id === what.id){
+                                        arr.splice(i, 1);
+                                    }
+                                }
+                            }
+                            return arr;
+                        };
+
+                        removeTestFromRunningList(_runningTests, {id:currentTestId});
+
+                    });
+
+                    res.json(
+                        {
+                            error:"false",
+                            msg:"Script execution triggered on runner server"
+                        }
+                    );
+
+                }
+
+            },
+            function(er) {
+                _io.emit(params.clientIp, 'client: '+params.clientIp);
+                _io.emit(params.clientIp, '<span style="color: red">' + er + '</span>');
+                res.json(
                     {
-                        error:"false",
-                        msg:"Script execution triggered on runner server"
+                        error:"true",
+                        msg:"Error in script execution on runner server"
                     }
                 );
-
             }
+        )
 
-        },
-        function(er) {
-            _io.emit(params.clientIp, 'client: '+params.clientIp);
-            _io.emit(params.clientIp, '<span style="color: red">' + er + '</span>');
-            res.end(
-                {
-                    error:"true",
-                    msg:"Error in script execution on runner server"
-                }
-            );
-        }
-    )
+    });
+
 };
 
 function writeTestFile(filename,appName,java,xml,clientIp,done, err){
 
-    _io.emit(clientIp, 'Creating test files..');
+    _io.emit(clientIp, 'Creating files..');
 
     var _taskXmlPath = util.getDirFromXMlName(filename);
 
@@ -187,7 +192,6 @@ function writeTestFile(filename,appName,java,xml,clientIp,done, err){
 };
 
 function commitFileToSvn(_filename,user, pass, svnUrl, app, res, success, err){
-    // todo: get file paths
     var _taskXmlPath = util.getDirFromXMlName(_filename);
 
     var javaFilePath = '/src/test/java/testcase/' + app + '/'+ 'Test_' + _filename + '.java';

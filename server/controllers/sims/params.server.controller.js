@@ -2,9 +2,12 @@
  * Created by AbhishekK on 9/26/2016.
  */
 
-var util = require('../../utils')
+var util = require('../../utils');
+var Client = require('svn-spawn');
 
-exports.mapRunParams = function(req,currentTestId) {
+exports.mapRunParams = function(req,currentTestId,done) {
+
+    // todo: add validation on input json
 
     /**
      *
@@ -61,7 +64,7 @@ exports.mapRunParams = function(req,currentTestId) {
             runParams.push(('-Dnode='+req.run.browser.node));
             runParams.push('-DbrVersion=ANY');
             console.log('-DhubIp='+serverIP[0]+'');
-            runParams.push('-DhubIp='+serverIP[0]+''); // todo: set dynamically for deployed machine, currently for loadrunner1
+            runParams.push('-DhubIp='+serverIP[0]+'');
             runParams.push('-DhubPort=4444');
         }
 
@@ -86,9 +89,44 @@ exports.mapRunParams = function(req,currentTestId) {
          run:req.run
      };
 
+	 if (req.task.commit.toString() === 'true') {
+         console.log('File Commit Request');
+			 var client = new Client({
+                cwd: (_serverDirectory + '/server/lib/jf'),
+                username: req.svn.username, // optional if authentication not required or is already saved
+                password: req.svn.password, // optional if authentication not required or is already saved
+                noAuthCache: true // optional, if true, username does not become the logged in user on the machine
+            });
+			
+            client.cmd(['cleanup'], function(err, data) {
+                if (err) {
+                    _io.emit(req.user.ip, 'Svn Cleanup Error');
+                    res.json(
+                        {
+                            error:"true",
+                            msg:"Error in SVN cleanup"
+                        }
+                    )
+                } else {
+                    client.update(function(err, data) {
+                        if(err){
+                            _io.emit(req.user.ip, 'Svn Update Error');
+                            console.log('svn update error');
+                            // todo: add command to cleanup and retry
+                        }
+                        _io.emit(req.user.ip, 'Svn Cleanup & Update..');
+                        console.log(outRequest);
+						//return outRequest;
+                        done(outRequest);
+                    });
+                }
+            });
+			
+	} else {
      _runningTests.push(CurrentTestDetails);
-
      console.log(_runningTests);
+	//return outRequest;
+     done(outRequest);
+	}
 
-    return outRequest;
 };
