@@ -19,7 +19,7 @@ webrouter.get('/stat', function(req, res) {
 webrouter.get('/svn', function(req, res) {
     res.setHeader('Cache-control', ['no-cache','no-store','must-revalidate']);
     res.setHeader('Pragma', 'no-cache');
-    res.render('svn',{ username: 'grid-server', name: 'grid-server' });
+    res.render('svn',{ layout: 'svn_layout' });
 });
 
 

@@ -90,6 +90,7 @@ exports.mapRunParams = function(req,currentTestId,done) {
      };
 
 	 if (req.task.commit.toString() === 'true') {
+         _io.emit(req.user.ip + '-svn', 'Svn Commit Acknowledged..');
          console.log('File Commit Request');
 			 var client = new Client({
                 cwd: (_serverDirectory + '/server/lib/jf'),
@@ -97,7 +98,8 @@ exports.mapRunParams = function(req,currentTestId,done) {
                 password: req.svn.password, // optional if authentication not required or is already saved
                 noAuthCache: true // optional, if true, username does not become the logged in user on the machine
             });
-			
+
+         _io.emit(req.user.ip + '-svn', 'Processing Commit Request..');
             client.cmd(['cleanup'], function(err, data) {
                 if (err) {
                     _io.emit(req.user.ip + '-svn', 'Svn Cleanup Error');
@@ -108,30 +110,29 @@ exports.mapRunParams = function(req,currentTestId,done) {
                         }
                     )
                 } else {
+/*
                     _io.emit(req.user.ip + '-svn', 'Svn Cleanup..');
                     console.log(outRequest);
                     //return outRequest;
                     done(outRequest);
+*/
 
-                    // todo: commented svn update - > might conflict / overwrite running tests
-/*                    client.update(function(err, data) {
+                    // todo: remove svn update from here and add alternate - > might conflict / overwrite running tests
+                    client.update(function(err, data) {
                         if(err){
                             _io.emit(req.user.ip + '-svn', 'Svn Update Error');
                             console.log('svn update error');
-                            // todo: add command to cleanup and retry
                         }
                         _io.emit(req.user.ip + '-svn', 'Svn Cleanup & Update..');
                         console.log(outRequest);
-						//return outRequest;
                         done(outRequest);
-                    });*/
+                    });
                 }
             });
 			
 	} else {
      _runningTests.push(CurrentTestDetails);
      console.log(_runningTests);
-	//return outRequest;
      done(outRequest);
 	}
 

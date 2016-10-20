@@ -10,6 +10,8 @@ var paramsHandler = require('./params.server.controller');
 var Client = require('svn-spawn');
 
 exports.runTask = function (req, res) {
+    var commitQ = [];
+    var processing = false;
 
     var currentTestId = util.getUUID();
     _io.emit(req.body.user.ip, 'Client: '+req.body.user.ip + ' requested.');
@@ -24,30 +26,55 @@ exports.runTask = function (req, res) {
         writeTestFile(params.task.filename,params.task.appName,params.task.java,params.task.xml,params.clientIp,
             function(){
                 if (params.task.commit.toString() === 'true') {
-                    /**
-                     * if commit
-                     */
-                    _io.emit(params.clientIp + '-svn', "Commit files to SVN - " + params.task.filename);
-                    commitFileToSvn(params.task.filename, params.svn.username, params.svn.password, params.svn.url, params.task.appName, res,
-                        function(success){ // success
-                            console.log("Files committed successfully");
-                            _io.emit(params.clientIp + '-svn', '<span style="color: green">Files committed successfully</span>');
-                            res.json(
-                                {
-                                    error:"false",
-                                    msg:"Files committed successfully"
-                                }
-                            );
-                        },function(failure){ // failure
-                            _io.emit(params.clientIp + '-svn', '<span style="color: red">Error in pushing files to svn.</span>');
-                            res.json(
-                                {
-                                    error:"true",
-                                    msg:"Error in pushing files to svn"
-                                }
-                            );
-                        });
 
+                    var newCommit = {
+                        clientIp: params.clientIp,
+                        filename: params.task.filename,
+                        appName: params.task.appName,
+                        svn: {
+                            username: params.svn.username,
+                            password: params.svn.password
+                        },
+                        res: res
+                    };
+
+                    commitQ.push(newCommit);
+
+                    if (!processing) {
+                        processing = true;
+                        while (commitQ.length) {
+                            var processEl = commitQ.shift();
+
+                            /**
+                             * if commit
+                             */
+
+                            _io.emit(processEl.clientIp + '-svn', "Committing files to SVN");
+                            _io.emit(processEl.clientIp + '-svn', processEl.filename);
+                            commitFileToSvn( processEl.filename, processEl.svn.username, processEl.svn.password, '', processEl.appName, processEl.res,
+                                function (success){ // success
+                                    if(!commitQ.length) {processing = false;} else {continue;}
+                                    console.log("Files committed successfully");
+                                    _io.emit(processEl.clientIp + '-svn', '<span style="color: green">Files committed successfully</span>');
+                                    res.json(
+                                        {
+                                            error:"false",
+                                            msg:"Files committed successfully"
+                                        }
+                                    );
+                                },function (failure){ // failure
+                                    if(!commitQ.length) {processing = false;} else {continue;}
+                                    _io.emit(processEl.clientIp + '-svn', '<span style="color: red">Error in pushing files to svn.</span>');
+                                    res.json(
+                                        {
+                                            error:"true",
+                                            msg:"Error in pushing files to svn"
+                                        }
+                                    );
+                                });
+                        }
+
+                    }
                 }
                 else {
                     /**
