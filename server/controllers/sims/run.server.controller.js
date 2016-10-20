@@ -42,18 +42,19 @@ exports.runTask = function (req, res) {
 
                     if (!processing) {
                         processing = true;
+
+                        nextRequest:
                         while (commitQ.length) {
                             var processEl = commitQ.shift();
 
                             /**
                              * if commit
                              */
-
                             _io.emit(processEl.clientIp + '-svn', "Committing files to SVN");
                             _io.emit(processEl.clientIp + '-svn', processEl.filename);
                             commitFileToSvn( processEl.filename, processEl.svn.username, processEl.svn.password, '', processEl.appName, processEl.res,
                                 function (success){ // success
-                                    if(!commitQ.length) {processing = false;} else {continue;}
+                                    if(!commitQ.length) {processing = false;}
                                     console.log("Files committed successfully");
                                     _io.emit(processEl.clientIp + '-svn', '<span style="color: green">Files committed successfully</span>');
                                     res.json(
@@ -63,7 +64,7 @@ exports.runTask = function (req, res) {
                                         }
                                     );
                                 },function (failure){ // failure
-                                    if(!commitQ.length) {processing = false;} else {continue;}
+                                    if(!commitQ.length) {processing = false;}
                                     _io.emit(processEl.clientIp + '-svn', '<span style="color: red">Error in pushing files to svn.</span>');
                                     res.json(
                                         {
