@@ -56,7 +56,8 @@
     "jshint-stylish": "~1.0.0",
     "socket.io": "",
     "mkdirp":"",
-    "downloadjs":""
+    "downloadjs":"",
+	"svn-spawn":""
     },
   "engines": {
     "node" : "4.4.4"
