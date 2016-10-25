@@ -359,35 +359,50 @@ function commitApplicationXpath(appName,xpaths, user, pass, success,failure){
 
         var configFileContent = _configArray.join(',');
 
-        // commit config
+        // write config file
 
-        var client = new Client({
-            cwd: (_serverDirectory + '/server/lib/jf'),
-            username: user, // optional if authentication not required or is already saved
-            password: pass, // optional if authentication not required or is already saved
-            noAuthCache: true // optional, if true, username does not become the logged in user on the machine
-        });
+        fs.writeFile( _configFileLocation, configFileContent, function(error) {
+            if (error) {
 
-        client.commit(['SIMS-0000', _configFileLocation], function(err, data) {
-            if (err) {
-                client.add(_configFileLocation, function(err, data) {
-                    if (err) {
-                            failure();
-                    } else {
-                        client.commit(['SIMS-0000', _configFileLocation], function(err, data) {
-                            if (err) {
-                                    failure();
-                            } else {
-                                success();
-                            }
-                        });
-                    }
+                err("write error:  " + error.message);
+                console.error("write error:  " + error.message);
 
-                });
+                failure();
+
             } else {
-                    success();
+                // commit config
+
+                var client = new Client({
+                    cwd: (_serverDirectory + '/server/lib/jf'),
+                    username: user, // optional if authentication not required or is already saved
+                    password: pass, // optional if authentication not required or is already saved
+                    noAuthCache: true // optional, if true, username does not become the logged in user on the machine
+                });
+
+                client.commit(['SIMS-0000', _configFileLocation], function(err, data) {
+                    if (err) {
+                        client.add(_configFileLocation, function(err, data) {
+                            if (err) {
+                                failure();
+                            } else {
+                                client.commit(['SIMS-0000', _configFileLocation], function(err, data) {
+                                    if (err) {
+                                        failure();
+                                    } else {
+                                        success();
+                                    }
+                                });
+                            }
+
+                        });
+                    } else {
+                        success();
+                    }
+                });
+
             }
         });
+
     });
 
 }
