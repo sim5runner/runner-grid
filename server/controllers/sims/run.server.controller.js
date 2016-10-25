@@ -9,6 +9,8 @@ var mkdirp = require('mkdirp');
 var paramsHandler = require('./params.server.controller');
 var Client = require('svn-spawn');
 
+var properties = require ("properties");
+
 exports.runTask = function (req, res) {
     var commitQ = [];
     var processing = false;
@@ -35,6 +37,7 @@ exports.runTask = function (req, res) {
                             username: params.svn.username,
                             password: params.svn.password
                         },
+                        xpath: params.task.xpaths,
                         res: res
                     };
 
@@ -43,7 +46,6 @@ exports.runTask = function (req, res) {
                     if (!processing) {
                         processing = true;
 
-                        nextRequest:
                         while (commitQ.length) {
                             var processEl = commitQ.shift();
 
@@ -54,15 +56,33 @@ exports.runTask = function (req, res) {
                             _io.emit(processEl.clientIp + '-svn', processEl.filename);
                             commitFileToSvn( processEl.filename, processEl.svn.username, processEl.svn.password, '', processEl.appName, processEl.res,
                                 function (success){ // success
-                                    if(!commitQ.length) {processing = false;}
-                                    console.log("Files committed successfully");
-                                    _io.emit(processEl.clientIp + '-svn', '<span style="color: green">Files committed successfully</span>');
-                                    res.json(
-                                        {
-                                            error:"false",
-                                            msg:"Files committed successfully"
+
+                                    /**
+                                     * commit xpath config
+                                     */
+                                    commitApplicationXpath(processEl.appName, processEl.xpaths, processEl.svn.username, processEl.svn.password, function (){
+                                        if(!commitQ.length) {processing = false;}
+                                        console.log("Files committed successfully");
+                                        _io.emit(processEl.clientIp + '-svn', '<span style="color: green">Files committed successfully</span>');
+                                        res.json(
+                                            {
+                                                error:"false",
+                                                msg:"Files committed successfully"
+                                            }
+                                        );
+                                    }, function(){
+                                            if(!commitQ.length) {processing = false;}
+                                            _io.emit(processEl.clientIp + '-svn', '<span style="color: red">Files Committed successfully. Error in Committing xpath config..</span>');
+                                            res.json(
+                                                {
+                                                    error:"true",
+                                                    msg:"Error in pushing files to svn"
+                                                }
+                                            );
                                         }
-                                    );
+
+                                    )
+
                                 },function (failure){ // failure
                                     if(!commitQ.length) {processing = false;}
                                     _io.emit(processEl.clientIp + '-svn', '<span style="color: red">Error in pushing files to svn.</span>');
@@ -314,4 +334,61 @@ function commitFileToSvn(_filename,user, pass, svnUrl, app, res, success, failur
     });
 
 };
+
+function commitApplicationXpath(appName,xpaths, user, pass, success,failure){
+
+    var _configFileLocation = _serverDirectory+"/server/lib/jf/src/test/resources/config/"+ appName.toLowerCase().trim() + "_config.properties"
+
+        // load config file to memory
+    properties.parse ("file", { path: true }, function (error, configObj){
+        if (error) failure();
+
+        for(var i in xpaths) {
+            var _searchKey = xpaths[i].split(/=(.+)?/)[0];
+            var _keyValue = xpaths[i].split(/=(.+)?/)[1];
+
+            configObj[_searchKey] = _keyValue
+        }
+        // updating content
+        var _configArray = [];
+        for (var key in configObj) {
+            if (obj.hasOwnProperty(key)) {
+                _configArray.push(key + '=' + configObj[key]);
+            }
+        };
+
+        var configFileContent = _configArray.join(',');
+
+        // commit config
+
+        var client = new Client({
+            cwd: (_serverDirectory + '/server/lib/jf'),
+            username: user, // optional if authentication not required or is already saved
+            password: pass, // optional if authentication not required or is already saved
+            noAuthCache: true // optional, if true, username does not become the logged in user on the machine
+        });
+
+        client.commit(['SIMS-0000', _configFileLocation], function(err, data) {
+            if (err) {
+                client.add(_configFileLocation, function(err, data) {
+                    if (err) {
+                            failure();
+                    } else {
+                        client.commit(['SIMS-0000', _configFileLocation], function(err, data) {
+                            if (err) {
+                                    failure();
+                            } else {
+                                success();
+                            }
+                        });
+                    }
+
+                });
+            } else {
+                    success();
+            }
+        });
+    });
+
+}
 
