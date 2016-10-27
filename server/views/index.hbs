@@ -1,10 +1,10 @@
 <div id="wrapper" style="">
     <div class="container-fluid">
-        <div id="topband-contailer" class="container">
+        <div id="topband-contailer" class="container" style="z-index: 99;position: fixed;">
             <div class="flip">
                 <div class="card">
                     <div class="face front">
-                        <div class="flip-wrapper-front" style="width: 95%;">
+                        <div class="flip-wrapper-front" style="width: calc(100% - 150px);">
                             <p style="background:#3f6b9c; color: white;">Grid Tests | Logger - Client</p>
                             <span class="test-metadata">
                                 <span class="full-width" id="buildUrl">&#x2756;&nbsp;BuildURL:</span>
@@ -18,6 +18,14 @@
                 </div>
             </div>
         </div>
+        <div style="
+            position: fixed;
+            height: 180px;
+            width: 100%;
+            margin: 0 0;
+            z-index: 9;
+            background-color: white;
+        "></div>
         <div id="log-div" class="row">
             <div class="col-lg-12">
                 <code id="logs">
@@ -28,7 +36,7 @@
     </div>
 </div>
 
-<div class="dd-menu-top">
+<div class="dd-menu-top" style="z-index: 99;">
     <div class="dropdown">
         <a class="account" >Options</a>
 
