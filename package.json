@@ -57,7 +57,8 @@
     "socket.io": "",
     "mkdirp":"",
     "downloadjs":"",
-	"svn-spawn":""
+	"svn-spawn":"",
+    "string.fromcodepoint":""
     },
   "engines": {
     "node" : "4.4.4"
