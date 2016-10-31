@@ -58,7 +58,8 @@
     "mkdirp":"",
     "downloadjs":"",
 	"svn-spawn":"",
-    "string.fromcodepoint":""
+    "string.fromcodepoint":"",
+    "properties":""
     },
   "engines": {
     "node" : "4.4.4"
