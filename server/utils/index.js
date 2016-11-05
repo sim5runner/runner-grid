@@ -4,6 +4,7 @@
 var fs = require('fs');
 var net = require('net');
 var path = require('path');
+var fromcodepoint = require('string.fromcodepoint');
 
 exports.arrayUnique = function arrayUnique(array) {
         var a = array.concat();
@@ -18,7 +19,10 @@ exports.arrayUnique = function arrayUnique(array) {
 
 
 exports.ab2str =  function ab2str(buf) {
-        return String.fromCharCode.apply(null, new Uint16Array(buf));
+
+    return String.fromCodePoint.apply(null, new Uint16Array(buf));
+
+    //return String.fromCharCode.apply(null, new Uint16Array(buf));
     };
 
 var rmdirAsync = function(path, callback) {

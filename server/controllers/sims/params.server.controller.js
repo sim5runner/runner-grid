@@ -90,7 +90,8 @@ exports.mapRunParams = function(req,currentTestId,done) {
      };
 
 	 if (req.task.commit.toString() === 'true') {
-         _io.emit(req.user.ip + '-svn', 'Svn Commit Acknowledged..');
+         _io.emit(req.user.ip + '<br>');
+         _io.emit(req.user.ip + '<span style="color: green">Svn Commit Acknowledged..</span>');
          console.log('File Commit Request');
 			 var client = new Client({
                 cwd: (_serverDirectory + '/server/lib/jf'),
