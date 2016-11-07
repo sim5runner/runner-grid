@@ -8,7 +8,6 @@ var Client = require('svn-spawn');
 exports.mapRunParams = function(req,currentTestId,done) {
 
     // todo: add validation on input json
-
     /**
      *
        {
@@ -37,6 +36,7 @@ exports.mapRunParams = function(req,currentTestId,done) {
 			"appName" : "word",
 			"xml": "xml file content",
 			"java": "java file content",
+			"json": " "
 			"commit":"true"
 			}
         "svn": {
