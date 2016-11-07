@@ -11,6 +11,8 @@ var Client = require('svn-spawn');
 
 var properties = require ("properties");
 
+var tempClientIp = '';
+
 exports.runTask = function (req, res) {
     var commitQ = [];
     var processing = false;
@@ -35,7 +37,8 @@ exports.runTask = function (req, res) {
                         appName: params.task.appName,
                         svn: {
                             username: params.svn.username,
-                            password: params.svn.password
+                            password: params.svn.password,
+                            message: params.svn.message
                         },
                         xpaths: params.task.xpaths,
                         res: res
@@ -47,24 +50,25 @@ exports.runTask = function (req, res) {
                         processing = true;
 
                         while (commitQ.length) {
-                            var processEl = commitQ.shift();
-
+                            var processEl = commitQ.shift() ;
+                            tempClientIp = processEl.clientIp ;
+                            console.log(tempClientIp);
                             /**
                              * if commit
                              */
                             _io.emit(processEl.clientIp + '-svn', "Committing files to SVN..");
                             _io.emit(processEl.clientIp + '-svn', processEl.filename);
-                            commitFileToSvn( processEl.filename, processEl.svn.username, processEl.svn.password, '', processEl.appName, processEl.res,
+                            commitFileToSvn( processEl.filename, processEl.svn.username, processEl.svn.password, processEl.svn.message, processEl.appName, processEl.res,
                                 function (success){ // success
 
                                     console.log("Java & Xml files committed successfully");
                                     _io.emit(processEl.clientIp + '-svn', '<span style="color: green">Java & Xml files committed successfully.</span>');
-                                    _io.emit(processEl.clientIp + '-svn', 'Updating and committing xpath config.. Please Wait !');
+                                    _io.emit(processEl.clientIp + '-svn', 'Updating xpath config.. Please Wait !');
 
                                     /**
                                      * commit xpath config
                                      */
-                                    commitApplicationXpath(processEl.appName, processEl.xpaths, processEl.svn.username, processEl.svn.password, function (){
+                                    commitApplicationXpath(processEl.appName, processEl.xpaths, processEl.svn.username, processEl.svn.password, processEl.svn.message, function (done){
                                         if(!commitQ.length) {processing = false;}
                                         console.log("Xpath committed successfully");
                                         _io.emit(processEl.clientIp + '-svn', '<span style="color: green">Xpath committed successfully</span>');
@@ -74,9 +78,10 @@ exports.runTask = function (req, res) {
                                                 msg:"Files committed successfully"
                                             }
                                         );
-                                    }, function(){
+                                    }, function(done){
                                             if(!commitQ.length) {processing = false;}
                                             _io.emit(processEl.clientIp + '-svn', '<span style="color: red">Files Committed successfully. Error in Committing xpath config..</span>');
+
                                             res.json(
                                                 {
                                                     error:"true",
@@ -242,7 +247,7 @@ function writeTestFile(filename,appName,java,xml,clientIp,done, err){
     console.log('writing.. '+ filename);
 };
 
-function commitFileToSvn(_filename,user, pass, svnUrl, app, res, success, failure){
+function commitFileToSvn(_filename,user, pass, message, app, res, success, failure){
     var _taskXmlPath = util.getDirFromXMlName(_filename);
 
     var javaFilePath = '/src/test/java/testcase/' + app + '/'+ 'Test_' + _filename + '.java';
@@ -269,7 +274,11 @@ function commitFileToSvn(_filename,user, pass, svnUrl, app, res, success, failur
     /**
      * Commiting java
      */
-    client.commit(['SIMS-0000', (_serverDirectory + '/server/lib/jf' + javaFilePath)], function(err, data) {
+    client.commit([('SIMS-0000: ' + message), (_serverDirectory + '/server/lib/jf' + javaFilePath)], function(err, data) {
+        console.log(typeof data);
+        console.log(util.ab2str(data));
+        console.log(typeof data);
+        _io.emit(tempClientIp, '<span style="color: black">' + JSON.stringify(data) + '</span>');
         if (err) {
             client.add(_serverDirectory + '/server/lib/jf' + javaFilePath, function(err, data) {
                 if (err) {
@@ -277,7 +286,8 @@ function commitFileToSvn(_filename,user, pass, svnUrl, app, res, success, failur
                         failure();
                     } else {otherCompleted = true;commiterr=true;}
                 } else {
-                    client.commit(['SIMS-0000', (_serverDirectory + '/server/lib/jf' + javaFilePath)], function(err, data) {
+                    client.commit([('SIMS-0000: ' + message), (_serverDirectory + '/server/lib/jf' + javaFilePath)], function(err, data) {
+                        _io.emit(tempClientIp, '<span style="color: black">' + JSON.stringify(data) + '</span>');
                         if (err) {
                             if(otherCompleted) {
                                 failure();
@@ -293,6 +303,7 @@ function commitFileToSvn(_filename,user, pass, svnUrl, app, res, success, failur
 
             });
         } else {
+
             if(otherCompleted && (!commiterr)) {
                 success();
             } else if(otherCompleted && commiterr) {
@@ -305,7 +316,8 @@ function commitFileToSvn(_filename,user, pass, svnUrl, app, res, success, failur
     /**
      * Commiting XML
      */
-    client.commit(['SIMS-0000', (_serverDirectory + '/server/lib/jf' + xmlFilePath)], function(err, data) {
+    client.commit([('SIMS-0000: ' + message), (_serverDirectory + '/server/lib/jf' + xmlFilePath)], function(err, data) {
+        _io.emit(tempClientIp, '<span style="color: black">' + JSON.stringify(data) + '</span>');
         if (err) {
             client.add(_serverDirectory + '/server/lib/jf' + xmlFilePath, function(err, data) {
                 if (err) {
@@ -313,7 +325,8 @@ function commitFileToSvn(_filename,user, pass, svnUrl, app, res, success, failur
                         failure();
                     } else {otherCompleted = true;commiterr=true;}
                 } else {
-                    client.commit(['SIMS-0000', (_serverDirectory + '/server/lib/jf' + xmlFilePath)], function(err, data) {
+                    client.commit([('SIMS-0000: ' + message), (_serverDirectory + '/server/lib/jf' + xmlFilePath)], function(err, data) {
+                        _io.emit(tempClientIp, '<span style="color: black">' + JSON.stringify(data) + '</span>');
                         if (err) {
                             if(otherCompleted) {
                                 failure();
@@ -339,7 +352,7 @@ function commitFileToSvn(_filename,user, pass, svnUrl, app, res, success, failur
 
 };
 
-function commitApplicationXpath(appName,xpaths, user, pass, success,failure){
+function commitApplicationXpath(appName,xpaths, user, pass, message, success,failure){
 
     var _configFileLocation = _serverDirectory+"/server/lib/jf/src/test/resources/config/"+ appName.toLowerCase().trim() + "_config.properties"
 
@@ -403,13 +416,15 @@ function commitApplicationXpath(appName,xpaths, user, pass, success,failure){
                     noAuthCache: true // optional, if true, username does not become the logged in user on the machine
                 });
 
-                client.commit(['SIMS-0000', _configFileLocation], function(err, data) {
+                client.commit([('SIMS-0000: ' + message), _configFileLocation], function(err, data) {
+                    _io.emit(tempClientIp, '<span style="color: black">' + JSON.stringify(data) + '</span>');
                     if (err) {
                         client.add(_configFileLocation, function(err, data) {
                             if (err) {
                                 failure();
                             } else {
-                                client.commit(['SIMS-0000', _configFileLocation], function(err, data) {
+                                client.commit([('SIMS-0000: ' + message), _configFileLocation], function(err, data) {
+                                    _io.emit(tempClientIp, '<span style="color: black">' + JSON.stringify(data) + '</span>');
                                     if (err) {
                                         failure();
                                     } else {

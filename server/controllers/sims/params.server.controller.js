@@ -42,7 +42,8 @@ exports.mapRunParams = function(req,currentTestId,done) {
         "svn": {
             "url": "",
             "username":"",
-            "password":""
+            "password":"",
+            "message" :""
             }
         }
      *
@@ -55,7 +56,7 @@ exports.mapRunParams = function(req,currentTestId,done) {
         runParams.push(('-DbrName='+req.run.browser.name.toLowerCase()));
         runParams.push(('-Dos='+req.run.os));
 
-        if(req.run.env.toLowerCase() === 'saucelabs'){  // todo push other saucelabs config
+        if (req.run.env.toLowerCase() === 'saucelabs') {  // todo push other saucelabs config
             runParams.push('-Dhost=saucelabs');
             runParams.push(('-DbrVersion='+req.run.browser.version));
 
@@ -104,6 +105,7 @@ exports.mapRunParams = function(req,currentTestId,done) {
             client.cmd(['cleanup'], function(err, data) {
                 if (err) {
                     _io.emit(req.user.ip + '-svn', 'Svn Cleanup Error');
+                    _io.emit(req.user.ip + '-svn', JSON.stringify(err));
                     res.json(
                         {
                             error:"true",
