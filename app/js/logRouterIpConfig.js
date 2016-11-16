@@ -51,7 +51,9 @@ if (RTCPeerConnection) (function () {
 
         // for svn
         socket.on((displayAddrs[0]+'-svn'), function(msg){
-            $('#svn').append($('<li>').html(msg));
+            if(msg) {
+                $('#svn').append($('<li>').html(msg.replace(/\r\n/g,'<br>')));
+            }
             window.scrollTo(0,document.body.scrollHeight);
         });
     }
