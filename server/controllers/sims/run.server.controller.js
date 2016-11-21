@@ -26,7 +26,6 @@ exports.runTask = function (req, res) {
          * Handling user request for run / commit
          *
          */
-
         writeTestFile(params.task.filename,params.task.appName,params.task.java,params.task.xml, params.task.json ,params.clientIp,
             function(){
                 if (params.task.commit.toString() === 'true') {
@@ -42,7 +41,8 @@ exports.runTask = function (req, res) {
                             message: params.svn.message
                         },
                         xpaths: params.task.xpaths,
-                        res: res
+                        res: res,
+                        error: params.error
                     };
 
                     commitQ.push(newCommit);
@@ -52,83 +52,101 @@ exports.runTask = function (req, res) {
 
                         while (commitQ.length) {
                             var processEl = commitQ.shift() ;
-                            tempClientIp = processEl.clientIp ;
-                            console.log(tempClientIp);
-                            /**
-                             * if commit
-                             */
-                            _io.emit(processEl.clientIp + '-svn', "Committing files to SVN..");
-                            _io.emit(processEl.clientIp + '-svn', processEl.filename);
-                            commitFileToSvn( processEl.filename, processEl.svn.username, processEl.svn.password, processEl.svn.message, processEl.appName, processEl.res,
-                                function (success){ // success
 
-                                    console.log("Java & Xml files committed successfully");
-                                    _io.emit(processEl.clientIp + '-svn', '<span style="color: #319db5;">Java & Xml files committed successfully.</span>');
-                                    _io.emit(processEl.clientIp + '-svn', 'Updating xpath config.. Please Wait !');
+                            if (processEl.error) {
+                                /**
+                                 * get params error
+                                 */
+                                _io.emit(processEl.clientIp + '-svn', '<span style="color: #ea5965; font-size: 16px"><b><br><br>SVN COMMIT ERROR.<br><br>=========================</b></span>');
+                                if(!commitQ.length) {processing = false;}
+                                res.json(
+                                    {
+                                        error:"true",
+                                        msg:" SVN Commit Error"
+                                    }
+                                );
+                            } else {
 
-                                    /**
-                                     * commit xpath config
-                                     */
-                                    commitApplicationXpath(processEl.appName, processEl.xpaths, processEl.svn.username, processEl.svn.password, processEl.svn.message, function (done){
-                                        console.log("Xpath committed successfully");
-                                        _io.emit(processEl.clientIp + '-svn', '<span style="color: #319db5;">Xpath committed successfully</span>');
+                                tempClientIp = processEl.clientIp ;
+                                console.log(tempClientIp);
+                                /**
+                                 * if commit
+                                 */
+                                _io.emit(processEl.clientIp + '-svn', "Committing files to SVN..");
+                                _io.emit(processEl.clientIp + '-svn', processEl.filename);
+                                commitFileToSvn( processEl.filename, processEl.svn.username, processEl.svn.password, processEl.svn.message, processEl.appName, processEl.res,
+                                    function (success){ // success
 
-                                            /**
-                                             * commit json file
-                                             */
-                                            var _taskXmlPath = util.getDirFromXMlName(processEl.filename);
-                                            var _jsonFileLocation =  _serverDirectory + '/server/lib/jf/src/test/resources/taskJSON' + _taskXmlPath + '/' + processEl.filename + '.json';
+                                        console.log("Java & Xml files committed successfully");
+                                        _io.emit(processEl.clientIp + '-svn', '<span style="color: #319db5;">Java & Xml files committed successfully.</span>');
+                                        _io.emit(processEl.clientIp + '-svn', 'Updating xpath config.. Please Wait !');
 
-                                            commitJsonFile(_jsonFileLocation , processEl.json, processEl.svn.username, processEl.svn.password, processEl.svn.message, function (done){
-                                                    if(!commitQ.length) {processing = false;}
-                                                    console.log("Xpath committed successfully");
-                                                    _io.emit(processEl.clientIp + '-svn', '<span style="color: #319db5;">Json committed successfully</span>');
-                                                    _io.emit(processEl.clientIp + '-svn', '<span style="color: #319db5;; font-size: 16px"><b><br><br>SVN COMMIT SUCCESSFUL.<br><br>=========================</b></span>');
-                                                    res.json(
-                                                        {
-                                                            error:"false",
-                                                            msg:" All Files committed successfully"
-                                                        }
-                                                    );
-                                                }, function(done){
-                                                    if(!commitQ.length) {processing = false;}
-                                                    _io.emit(processEl.clientIp + '-svn', '<span style="color: #ea5965;">Error in Committing json file..</span>');
+                                        /**
+                                         * commit xpath config
+                                         */
+                                        commitApplicationXpath(processEl.appName, processEl.xpaths, processEl.svn.username, processEl.svn.password, processEl.svn.message, function (done){
+                                                console.log("Xpath committed successfully");
+                                                _io.emit(processEl.clientIp + '-svn', '<span style="color: #319db5;">Xpath committed successfully</span>');
 
-                                                    res.json(
-                                                        {
-                                                            error:"true",
-                                                            msg:"Error in Committing json file. Please Retry !"
-                                                        }
-                                                    );
-                                                }
+                                                /**
+                                                 * commit json file
+                                                 */
+                                                var _taskXmlPath = util.getDirFromXMlName(processEl.filename);
+                                                var _jsonFileLocation =  _serverDirectory + '/server/lib/jf/src/test/resources/taskJSON' + _taskXmlPath + '/' + processEl.filename + '.json';
 
-                                            )
+                                                commitJsonFile(_jsonFileLocation , processEl.json, processEl.svn.username, processEl.svn.password, processEl.svn.message, function (done){
+                                                        if(!commitQ.length) {processing = false;}
+                                                        console.log("Xpath committed successfully");
+                                                        _io.emit(processEl.clientIp + '-svn', '<span style="color: #319db5;">Json committed successfully</span>');
+                                                        _io.emit(processEl.clientIp + '-svn', '<span style="color: #319db5;; font-size: 16px"><b><br><br>SVN COMMIT SUCCESSFUL.<br><br>=========================</b></span>');
+                                                        res.json(
+                                                            {
+                                                                error:"false",
+                                                                msg:" All Files committed successfully"
+                                                            }
+                                                        );
+                                                    }, function(done){
+                                                        if(!commitQ.length) {processing = false;}
+                                                        _io.emit(processEl.clientIp + '-svn', '<span style="color: #ea5965;">Error in Committing json file..</span>');
 
-                                    }, function(done){
-                                            if(!commitQ.length) {processing = false;}
-                                            _io.emit(processEl.clientIp + '-svn', '<span style="color: #ea5965;">Error in Committing xpath config..</span>');
+                                                        res.json(
+                                                            {
+                                                                error:"true",
+                                                                msg:"Error in Committing json file. Please Retry !"
+                                                            }
+                                                        );
+                                                    }
 
-                                            res.json(
-                                                {
-                                                    error:"true",
-                                                    msg:"Files Committed successfully. Error in Committing xpath config. Please Retry !"
-                                                }
-                                            );
-                                        }
+                                                )
 
-                                    )
+                                            }, function(done){
+                                                if(!commitQ.length) {processing = false;}
+                                                _io.emit(processEl.clientIp + '-svn', '<span style="color: #ea5965;">Error in Committing xpath config..</span>');
 
-                                },function (failure){ // failure
-                                    if(!commitQ.length) {processing = false;}
-                                    _io.emit(processEl.clientIp + '-svn', '<span style="color: #ea5965;">Error in pushing Java / Xml files to svn.</span>');
-                                    _io.emit(processEl.clientIp + '-svn', '<span style="color: #ea5965;">Please Retry !</span>');
-                                    res.json(
-                                        {
-                                            error:"true",
-                                            msg:"Error in pushing Java / Xml files to svn. Please Retry !"
-                                        }
-                                    );
-                                });
+                                                res.json(
+                                                    {
+                                                        error:"true",
+                                                        msg:"Files Committed successfully. Error in Committing xpath config. Please Retry !"
+                                                    }
+                                                );
+                                            }
+
+                                        )
+
+                                    },function (failure){ // failure
+                                        if(!commitQ.length) {processing = false;}
+                                        _io.emit(processEl.clientIp + '-svn', '<span style="color: #ea5965;">Error in pushing Java / Xml files to svn.</span>');
+                                        _io.emit(processEl.clientIp + '-svn', '<span style="color: #ea5965;">Please Retry !</span>');
+                                        res.json(
+                                            {
+                                                error:"true",
+                                                msg:"Error in pushing Java / Xml files to svn. Please Retry !"
+                                            }
+                                        );
+                                    });
+
+                            }
+
                         }
 
                     }
