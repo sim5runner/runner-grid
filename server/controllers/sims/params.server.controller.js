@@ -102,9 +102,9 @@ exports.mapRunParams = function(req,currentTestId,done) {
          try {
              client = new Client({
                  cwd: (_serverDirectory + '/server/lib/jf'),
-                 username: req.svn.username, // optional if authentication not required or is already saved
-                 password: req.svn.password, // optional if authentication not required or is already saved
-                 noAuthCache: true // optional, if true, username does not become the logged in user on the machine
+                 username: req.svn.username,
+                 password: req.svn.password,
+                 noAuthCache: true
              });
          } catch (er1){
              _io.emit(req.user.ip + '-svn', 'Svn Error');
@@ -115,7 +115,7 @@ exports.mapRunParams = function(req,currentTestId,done) {
             client.cmd(['cleanup'], function(err, data) {
                 if (err) {
                     outRequest.error = true;
-                    _io.emit(req.user.ip + '-svn', 'Svn Cleanup Error');
+                    _io.emit(req.user.ip + '-svn', 'SVN Cleanup Error');
                     _io.emit(req.user.ip + '-svn', '<span style="color: #ea5965;">'+err+'</span>');
 
                     res.json(
@@ -133,11 +133,10 @@ exports.mapRunParams = function(req,currentTestId,done) {
                     client.update(function(err, data) {
                         if(err){
                             outRequest.error = true;
-                            _io.emit(req.user.ip + '-svn', 'Svn Cleanup Error');
+                            _io.emit(req.user.ip + '-svn', 'SVN Cleanup Error');
                             _io.emit(req.user.ip + '-svn', '<span style="color: #ea5965;">'+err+'</span>');
                             console.log('svn update error');
                         }
-                        _io.emit(req.user.ip + '-svn', 'Svn Cleanup & Update..');
                         _io.emit(req.user.ip + '-svn', data);
                         console.log(outRequest);
                         done(outRequest);

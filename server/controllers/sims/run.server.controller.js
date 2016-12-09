@@ -10,6 +10,7 @@ var fs = require('fs');
 var Q = require('q');
 
 var process = require('child_process');
+var Client = require('svn-spawn');
 var properties = require ("properties");
 
 var tempClientIp = '';
@@ -93,23 +94,21 @@ exports.runOrCommitTask = function (req, res) {
 
                             loadAndUpdateApplicationXpathConfig(processEl.appName, processEl.xpaths,
                                 function (appXpathConfig) {
-                                    console.log('tes 1');
-                                    console.log(processEl.files.length);
                                     processEl.files.push(appXpathConfig); // adding file to list
 
                                     util.write_files([appXpathConfig]) // write xpath config
                                         .then(function (data) {
                                             trigger_commit(processEl, // trigger commit files
-                                                function(success){
-                                                    _io.emit(processEl.clientIp, '<span style="color:#ea5965;">' +
-                                                    'Commit Process Ended</span>');
+                                                function(doneCommit){
+                                                    _io.emit(processEl.clientIp, '<span>' +
+                                                    '*** Commit Process Ended ***</span>');
                                                     if (!commitQ.length) {
                                                         processing = false;
                                                     }
                                                 });
                                         })
                                         .catch(function (err) {
-                                            console.log('failed');
+                                            console.log('Config write failed.');
                                             console.log(err);
                                         })
                                         .done();
@@ -188,92 +187,85 @@ exports.runOrCommitTask = function (req, res) {
         function trigger_commit(processEl, doneCommit) {
 
             tempClientIp = processEl.clientIp;
-            console.log(tempClientIp);
 
-            _io.emit(processEl.clientIp + '-svn', "Committing files to SVN..");
             _io.emit(processEl.clientIp + '-svn', processEl.filename);
+            _io.emit(processEl.clientIp + '-svn', "Committing files to SVN..");
+
+            var changelistCMD = ['changelist'];
+            changelistCMD.push('svnbot-' + processEl.clientIp);
+
+
+            processEl.files.forEach(function(f, i, files){
+                if(f.path) {
+                    changelistCMD.push(f.path);
+                }
+            });
+
+            var client;
+            try {
+                client = new Client({
+                    cwd: (_serverDirectory + '/server/lib/jf'),
+                    username: processEl.svn.username,
+                    password: processEl.svn.password,
+                    noAuthCache: true
+                });
+            } catch (er1){
+                _io.emit(processEl.clientIp + '-svn', 'SVN Error');
+                _io.emit(processEl.clientIp + '-svn', '<span style="color: #ea5965;">'+er1+'</span>');
+                doneCommit();
+            }
 
             /**
              * Adding Files to Commit
              */
-                console.log(processEl.files.length);
-            var cfiles = processEl.files.reduce(function(final, current){
-                console.log('final.path ' + final.path);
-                console.log('current.path ' + current.path);
-                if(final.path && current.path) {
-                    return  '\"' + final.path.replace(/\\/g, "/") + '\" \"'+ current.path.replace(/\\/g, "/") + '\"';
-                } else if(final && current.path.replace(/\\/g, "/")){
-                    return   final + ' \"'+ current.path.replace(/\\/g, "/") + '\"'; }
-            });
+            client.cmd(changelistCMD, function(err2, data) {
+                if(!err2){
+                    console.log(data)
+                    _io.emit(processEl.clientIp + '-svn', '<span>' +
+                    data +'</span>');
+                    var changelistCommitCMD = ['commit','--changelist',('svnbot-' + processEl.clientIp) ,
+                        ('-m\"SIMS-0000 '+ processEl.svn.message + '\"')]
 
-            var cred = ' --username ' + processEl.svn.username + ' --password ' + processEl.svn.password;
+                    /**
+                     * Committing files to SVN
+                     */
+                    client.cmd(changelistCommitCMD, function(err3, data) {
+                        if(err3) {
+                            console.log(err3);
+                            _io.emit(processEl.clientIp + '-svn', 'SVN Commit Error');
+                            _io.emit(processEl.clientIp + '-svn', '<span style="color: #ea5965;">' +
+                            err3 +'</span>');
+                            res.json(
+                                {
+                                    error: "true",
+                                    msg: "error in svn commit process"
+                                });
+                            doneCommit();
 
-            var changelistCMD = 'svn changelist svnbot' + ' ' + cfiles + cred;
-
-            console.log('running cmd ' + changelistCMD);
-
-            var ls;
-            var options = {
-                cwd: (_serverDirectory + "/server/lib/jf"),
-                env: process.env
-            };
-            ls = process.spawn('cmd.exe', ['/c', changelistCMD], options);
-
-            ls.stdout.on('data', function (data) {
-                _io.emit(processEl.clientIp + '-svn', '<span style="color: #ea5965;">' +
-                util.ab2str(data) + '</span>');
-            });
-
-            ls.stderr.on('data', function (data) {
-                _io.emit(processEl.clientIp + '-svn', '<span style="color: red">' +
-                util.ab2str(data) + '</span>');
-            });
-
-            ls.on('exit', function (code) {
-                console.log('SVN add exited with code ' + code);
-                //todo: validate exit code - doneCommit(code); if error else next
-
-                /**
-                 * Committing files to SVN
-                 */
-                    var changelistCommitCMD = 'svn commit --changelist svnbot' +
-                        ' -m\"SIMS-0000 '+ processEl.svn.message +'\"' + cred;
-
-                    console.log('running cmd ' + changelistCommitCMD);
-                    var ls1;
-
-                    var options = {
-                        cwd: (_serverDirectory + "/server/lib/jf"),
-                        env: process.env
-                    };
-
-                    ls1 = process.spawn('cmd.exe', ['/c', changelistCommitCMD], options);
-
-                    ls1.stdout.on('data', function (data) {
-                        _io.emit(processEl.clientIp + '-svn', '<span style="color: #ea5965;">' +
-                        util.ab2str(data) + '</span>');
+                        } else {
+                            console.log(data);
+                            _io.emit(processEl.clientIp + '-svn', '<span>' +
+                            data +'</span>');
+                            res.json(
+                                {
+                                    error: "false",
+                                    msg: "SVN committ done server"
+                                });
+                            doneCommit();
+                        }
                     });
-
-                    ls1.stderr.on('data', function (data) {
-                        _io.emit(processEl.clientIp + '-svn', '<span style="color: red">' +
-                        util.ab2str(data) + '</span>');
-                    });
-
-                    ls1.on('exit', function (code1) {
-                        console.log('SVN commit exited with code ' + code1);
-                        doneCommit(code);
-                    });
-
-                    ls1.on('close', function (code) {
-                        doneCommit(code);
-                    });
-
+                } else {
+                    console.log(err2);
+                    _io.emit(processEl.clientIp + '-svn', 'SVN Error.');
+                    _io.emit(processEl.clientIp + '-svn', '<span style="color: #ea5965;">'+err2+'</span>');
                     res.json(
                         {
-                            error: "false",
-                            msg: "SVN commit triggered on server"
-                        }
-                    );
+                            error: "true",
+                            msg: "error in svn commit process"
+                        });
+                    doneCommit();
+                }
+
             });
         }
     });
