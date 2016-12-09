@@ -32,7 +32,8 @@ exports.mapRunParams = function(req,currentTestId,done) {
 				}
 		},
 		"task": {
-			"filename": "GO16_WD_04_4A_01_A1",  // todo: corresponding update in post json in scriptor
+			"filename": "GO16_WD_04_4A_01_A1",
+			// todo: corresponding update in post json in scriptor
 			"appName" : "word",
 			"xml": "xml file content",
 			"java": "java file content",
@@ -52,7 +53,8 @@ exports.mapRunParams = function(req,currentTestId,done) {
         var runParams = [];
 
         runParams.push('mvn test');
-        runParams.push(('-DtestName='+req.task.appName.toLowerCase()+'.Test_'+req.task.filename)); // todo: check if filename require / contains any extension
+        runParams.push(('-DtestName='+req.task.appName.toLowerCase()+'.Test_'+req.task.filename));
+         // todo: check if filename require / contains any extension
         runParams.push(('-DbrName='+req.run.browser.name.toLowerCase()));
         runParams.push(('-Dos='+req.run.os));
 
@@ -125,14 +127,9 @@ exports.mapRunParams = function(req,currentTestId,done) {
                 } else {
 
                     _io.emit(req.user.ip + '-svn', data);
-/*
-                    _io.emit(req.user.ip + '-svn', 'Svn Cleanup..');
-                    console.log(outRequest);
-                    //return outRequest;
-                    done(outRequest);
-*/
 
-                    // todo: remove svn update from here and add alternate - > might conflict / overwrite running tests
+                    // todo: remove svn update from here and add alternate - >
+                    // might conflict / overwrite running tests
                     client.update(function(err, data) {
                         if(err){
                             outRequest.error = true;

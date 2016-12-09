@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "postinstall": "bower prune && bower install && gulp",
-    "start": "forever start -1 forever.log -o out.log --append -e err.log --append server.js"
+    "test": "mocha server/tests/*",
+    "start": "node server.js"
   },
   "dependencies": {
     "body-parser": "^1.13.3",
@@ -58,10 +59,13 @@
     "mkdirp":"",
     "downloadjs":"",
 	"svn-spawn":"",
-    "string.fromcodepoint":"",
     "properties":"",
-    "forever": "0.15.3"
+    "forever": "0.15.3",
+    "q" : "1.4.1"
     },
+  "devDependencies": {
+    "mocha": "2.5.3"
+  },
   "engines": {
     "node" : "4.4.4"
   }
