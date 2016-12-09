@@ -76,7 +76,8 @@ exports.mapRunParams = function(req,currentTestId,done) {
             command :command,
             task : req.task,
             clientIp: req.user.ip,
-            svn: req.svn
+            svn: req.svn,
+            error: false
         };
 
     /**
@@ -111,6 +112,7 @@ exports.mapRunParams = function(req,currentTestId,done) {
          _io.emit(req.user.ip + '-svn', 'Processing Commit Request..');
             client.cmd(['cleanup'], function(err, data) {
                 if (err) {
+                    outRequest.error = true;
                     _io.emit(req.user.ip + '-svn', 'Svn Cleanup Error');
                     _io.emit(req.user.ip + '-svn', '<span style="color: #ea5965;">'+err+'</span>');
 
@@ -133,6 +135,7 @@ exports.mapRunParams = function(req,currentTestId,done) {
                     // todo: remove svn update from here and add alternate - > might conflict / overwrite running tests
                     client.update(function(err, data) {
                         if(err){
+                            outRequest.error = true;
                             _io.emit(req.user.ip + '-svn', 'Svn Cleanup Error');
                             _io.emit(req.user.ip + '-svn', '<span style="color: #ea5965;">'+err+'</span>');
                             console.log('svn update error');
