@@ -6,7 +6,7 @@
   "scripts": {
     "postinstall": "bower prune && bower install && gulp",
     "test": "mocha server/tests/*",
-    "start": "node server.js"
+    "start": "forever start -1 forever.log -o out.log --append -e err.log --append server.js"
   },
   "dependencies": {
     "body-parser": "^1.13.3",
