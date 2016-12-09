@@ -4,32 +4,72 @@
 'use strict';
 
 var util = require('../../utils');
-var fs = require('fs');
-var mkdirp = require('mkdirp');
 var paramsHandler = require('./params.server.controller');
-var Client = require('svn-spawn');
 
+var fs = require('fs');
+var Q = require('q');
+
+var process = require('child_process');
+var Client = require('svn-spawn');
 var properties = require ("properties");
 
 var tempClientIp = '';
 
-exports.runTask = function (req, res) {
+exports.runOrCommitTask = function (req, res) {
     var commitQ = [];
     var processing = false;
+    var clientIp = req.body.user.ip;
 
     var currentTestId = util.getUUID();
-    _io.emit(req.body.user.ip, 'Client: '+req.body.user.ip + ' requested.');
+    _io.emit(clientIp, 'Client: ' + clientIp + ' requested.');
 
-    paramsHandler.mapRunParams(req.body,currentTestId, function(params){ // mapping params
-
+    paramsHandler.mapRunParams(req.body, currentTestId, function (params) { // mapping params
         /**
-         * Handling user request for run / commit
-         *
+         * Write files - java, xml, json
          */
-        writeTestFile(params.task.filename,params.task.appName,params.task.java,params.task.xml, params.task.json ,params.clientIp,
-            function(){
-                if (params.task.commit.toString() === 'true') {
+        _io.emit(clientIp, 'Creating files..');
+        var filename = params.task.filename;
+        var fileSuffixDirectoryPath = util.getDirFromXMlName(filename);
+        var files = [];
 
+        // xml file
+        files.push( new function() {
+            this.dir = (_serverDirectory + "/server/lib/jf/src/test/resources/taskXML" +
+            fileSuffixDirectoryPath);
+            this.path = (this.dir + "/" + filename + '.xml');
+            this.data = params.task.xml;
+        });
+
+        // json file
+        files.push(new function () {
+            this.dir = (_serverDirectory + "/server/lib/jf/src/test/resources/taskJSON" +
+            fileSuffixDirectoryPath);
+            this.path = (this.dir + "/" + filename + '.json');
+            this.data = params.task.json;
+        });
+
+        // java file
+        files.push(new function () {
+            this.dir = _serverDirectory + "/server/lib/jf/src/test/java/testcase/" +
+            params.task.appName + "/";
+            this.path = ( this.dir + "Test_" + filename + '.java' );
+            this.data = params.task.java;
+        });
+
+        util.write_files(files)
+            .then(function (data) {
+
+                if (params.task.commit.toString() === 'false') {
+                    /**
+                     * Run tests
+                     */
+                    trigger_run();
+                }
+                else if (params.task.commit.toString() === 'true') {
+                    /**
+                     *
+                     * Commit Files
+                     */
                     var newCommit = {
                         clientIp: params.clientIp,
                         filename: params.task.filename,
@@ -41,527 +81,250 @@ exports.runTask = function (req, res) {
                             message: params.svn.message
                         },
                         xpaths: params.task.xpaths,
+                        files: files,
                         res: res,
                         error: params.error
                     };
 
                     commitQ.push(newCommit);
-
                     if (!processing) {
                         processing = true;
-
                         while (commitQ.length) {
-                            var processEl = commitQ.shift() ;
+                            var processEl = commitQ.shift();
 
-                            if (processEl.error) {
-                                /**
-                                 * get params error
-                                 */
-                                _io.emit(processEl.clientIp + '-svn', '<span style="color: #ea5965; font-size: 16px"><b><br><br>SVN COMMIT ERROR.<br><br>=========================</b></span>');
-                                if(!commitQ.length) {processing = false;}
-                                res.json(
-                                    {
-                                        error:"true",
-                                        msg:" SVN Commit Error"
-                                    }
-                                );
-                            } else {
+                            loadAndUpdateApplicationXpathConfig(processEl.appName, processEl.xpaths,
+                                function (appXpathConfig) {
+                                    processEl.files.push(appXpathConfig); // adding file to list
 
-                                tempClientIp = processEl.clientIp ;
-                                console.log(tempClientIp);
-                                /**
-                                 * if commit
-                                 */
-                                _io.emit(processEl.clientIp + '-svn', "Committing files to SVN..");
-                                _io.emit(processEl.clientIp + '-svn', processEl.filename);
-                                commitFileToSvn( processEl.filename, processEl.svn.username, processEl.svn.password, processEl.svn.message, processEl.appName, processEl.res,
-                                    function (success){ // success
-
-                                        console.log("Java & Xml files committed successfully");
-                                        _io.emit(processEl.clientIp + '-svn', '<span style="color: #319db5;">Java & Xml files committed successfully.</span>');
-                                        _io.emit(processEl.clientIp + '-svn', 'Updating xpath config.. Please Wait !');
-
-                                        /**
-                                         * commit xpath config
-                                         */
-                                        commitApplicationXpath(processEl.appName, processEl.xpaths, processEl.svn.username, processEl.svn.password, processEl.svn.message, function (done){
-                                                console.log("Xpath committed successfully");
-                                                _io.emit(processEl.clientIp + '-svn', '<span style="color: #319db5;">Xpath committed successfully</span>');
-
-                                                /**
-                                                 * commit json file
-                                                 */
-                                                var _taskXmlPath = util.getDirFromXMlName(processEl.filename);
-                                                var _jsonFileLocation =  _serverDirectory + '/server/lib/jf/src/test/resources/taskJSON' + _taskXmlPath + '/' + processEl.filename + '.json';
-
-                                                commitJsonFile(_jsonFileLocation , processEl.json, processEl.svn.username, processEl.svn.password, processEl.svn.message, function (done){
-                                                        if(!commitQ.length) {processing = false;}
-                                                        console.log("Xpath committed successfully");
-                                                        _io.emit(processEl.clientIp + '-svn', '<span style="color: #319db5;">Json committed successfully</span>');
-                                                        _io.emit(processEl.clientIp + '-svn', '<span style="color: #319db5;; font-size: 16px"><b><br><br>SVN COMMIT SUCCESSFUL.<br><br>=========================</b></span>');
-                                                        res.json(
-                                                            {
-                                                                error:"false",
-                                                                msg:" All Files committed successfully"
-                                                            }
-                                                        );
-                                                    }, function(done){
-                                                        if(!commitQ.length) {processing = false;}
-                                                        _io.emit(processEl.clientIp + '-svn', '<span style="color: #ea5965;">Error in Committing json file..</span>');
-
-                                                        res.json(
-                                                            {
-                                                                error:"true",
-                                                                msg:"Error in Committing json file. Please Retry !"
-                                                            }
-                                                        );
+                                    util.write_files([appXpathConfig]) // write xpath config
+                                        .then(function (data) {
+                                            trigger_commit(processEl, // trigger commit files
+                                                function(doneCommit){
+                                                    _io.emit(processEl.clientIp, '<span>' +
+                                                    '*** Commit Process Ended ***</span>');
+                                                    if (!commitQ.length) {
+                                                        processing = false;
                                                     }
-
-                                                )
-
-                                            }, function(done){
-                                                if(!commitQ.length) {processing = false;}
-                                                _io.emit(processEl.clientIp + '-svn', '<span style="color: #ea5965;">Error in Committing xpath config..</span>');
-
-                                                res.json(
-                                                    {
-                                                        error:"true",
-                                                        msg:"Files Committed successfully. Error in Committing xpath config. Please Retry !"
-                                                    }
-                                                );
-                                            }
-
-                                        )
-
-                                    },function (failure){ // failure
-                                        if(!commitQ.length) {processing = false;}
-                                        _io.emit(processEl.clientIp + '-svn', '<span style="color: #ea5965;">Error in pushing Java / Xml files to svn.</span>');
-                                        _io.emit(processEl.clientIp + '-svn', '<span style="color: #ea5965;">Please Retry !</span>');
-                                        res.json(
-                                            {
-                                                error:"true",
-                                                msg:"Error in pushing Java / Xml files to svn. Please Retry !"
-                                            }
-                                        );
-                                    });
-
-                            }
-
-                        }
-
-                    }
-                }
-                else {
-                    /**
-                     * else run and return
-                     */
-
-                    var cmd = params.command;
-
-                    _io.emit(params.clientIp, JSON.stringify(req.body));
-                    console.log('Client: '+params.clientIp);
-                    console.log('running command ' + cmd);
-
-                    _io.emit(params.clientIp, 'Running command ' + cmd);
-
-                    var process = require('child_process');
-                    var ls;
-
-                    var options = { cwd: (_serverDirectory+"/server/lib/jf"),
-                        env: process.env
-                    };
-
-                    ls = process.spawn('cmd.exe', ['/c', cmd], options);
-
-                    ls.stdout.on('data', function(data){
-                        // todo: preserve logs
-                        _io.emit(params.clientIp, '<span style="color: black">' + util.ab2str(data) + '</span>');
-                        //console.log(util.ab2str(data));
-                    });
-
-                    ls.stderr.on('data', function (data) {
-                        _io.emit(params.clientIp, '<span style="color: red">' + util.ab2str(data) + '</span>');
-                        //console.log(util.ab2str(data));
-                    });
-
-                    ls.on('exit', function (code) {
-                        console.log('run command exited with code ' + code);
-                    });
-
-                    ls.on('close', function(code) {
-                        console.log('closing code: ' + code);
-
-                        function removeTestFromRunningList(arr) {
-                            var what, a = arguments, L = a.length, ax, i=0;
-                            while (L > 1 && arr.length) {
-                                what = a[--L];
-                                for (var i=arr.length-1; i>=0; i--) {
-                                    if(arr[i].id === what.id){
-                                        arr.splice(i, 1);
-                                    }
+                                                });
+                                        })
+                                        .catch(function (err) {
+                                            console.log('Config write failed.');
+                                            console.log(err);
+                                        })
+                                        .done();
+                                },
+                                function (failure) {
                                 }
-                            }
-                            return arr;
+                            );
                         };
-
-                        removeTestFromRunningList(_runningTests, {id:currentTestId});
-
-                    });
-
-                    res.json(
-                        {
-                            error:"false",
-                            msg:"Script execution triggered on runner server"
-                        }
-                    );
-
-                }
-
-            },
-            function(er) {
-                _io.emit(params.clientIp, 'client: '+params.clientIp);
-                _io.emit(params.clientIp, '<span style="color: red">' + er + '</span>');
-                res.json(
-                    {
-                        error:"true",
-                        msg:"Error in script execution on runner server"
                     }
-                );
-            }
-        )
-
-    });
-
-};
-
-function writeTestFile(filename,appName,java,xml,json,clientIp,done, err){
-
-    _io.emit(clientIp, 'Creating files..');
-
-    var _taskXmlPath = util.getDirFromXMlName(filename);
-
-    var xmlDirectory = (_serverDirectory + "/server/lib/jf/src/test/resources/taskXML" + _taskXmlPath);
-    var xmlfilepath = xmlDirectory + "/" + filename + '.xml';
-
-    var javafilepath = (_serverDirectory+"/server/lib/jf/src/test/java/testcase/"+appName + "/Test_" + filename + '.java');
-
-    if (!(fs.existsSync(xmlDirectory))){
-        console.log('creating dir.. '+ xmlDirectory);
-        mkdirp(xmlDirectory, function (err) {
-            if (err) console.error(err)
-            else {
-                writeFilesToDisk (xmlfilepath,xml,javafilepath,java);
-            }
-        });
-    } else {
-        writeFilesToDisk (xmlfilepath, xml, javafilepath, java);
-    }
-
-    function writeFilesToDisk( xmlfilepath, xml, javafilepath, java ){
-
-        var otherCompleted = false;
-        fs.writeFile( xmlfilepath, xml, function(error) {
-            if (error) {
-                err("write error:  " + error.message);
-                console.error("write error:  " + error.message);
-            } else {
-                if(otherCompleted) {
-                    done();
-                } else {
-                    otherCompleted = true;
                 }
-                console.log("Successful Write to " + xmlfilepath);
-            }
-        });
+            })
+            .catch(function (err) {
+                console.log('error in writing files');
+                console.log(err);
+            })
+            .done();
 
-        fs.writeFile( javafilepath, java, function(error) {
-            if (error) {
-                err("write error:  " + error.message);
-                console.error("write error:  " + error.message);
-            } else {
-                if(otherCompleted) {
-                    done();
-                } else {
-                    otherCompleted = true;
+        function trigger_run() {
+
+            var cmd = params.command;
+
+            _io.emit(params.clientIp, JSON.stringify(req.body));
+            console.log('Client: ' + params.clientIp);
+            console.log('running command ' + cmd);
+
+            _io.emit(params.clientIp, 'Running command ' + cmd);
+
+            var ls;
+
+            var options = {
+                cwd: (_serverDirectory + "/server/lib/jf"),
+                env: process.env
+            };
+
+            ls = process.spawn('cmd.exe', ['/c', cmd], options);
+
+            ls.stdout.on('data', function (data) {
+                _io.emit(params.clientIp, '<span style="color: black">' +
+                util.ab2str(data) + '</span>');
+            });
+
+            ls.stderr.on('data', function (data) {
+                _io.emit(params.clientIp, '<span style="color: red">' +
+                util.ab2str(data) + '</span>');
+            });
+
+            ls.on('exit', function (code) {
+                console.log('run command exited with code ' + code);
+            });
+
+            ls.on('close', function (code) {
+                removeTestFromRunningList(_runningTests, {id: currentTestId});
+
+                function removeTestFromRunningList(arr) {
+                    var what, a = arguments, L = a.length, ax, i = 0;
+                    while (L > 1 && arr.length) {
+                        what = a[--L];
+                        for (var i = arr.length - 1; i >= 0; i--) {
+                            if (arr[i].id === what.id) {
+                                arr.splice(i, 1);
+                            }
+                        }
+                    }
+                    return arr;
+                };
+            });
+
+            res.json(
+                {
+                    error: "false",
+                    msg: "Script execution triggered on runner server"
                 }
-                console.log("Successful Write to " + javafilepath);
+            );
+        }; // end - trigger test
+
+        function trigger_commit(processEl, doneCommit) {
+
+            tempClientIp = processEl.clientIp;
+
+            _io.emit(processEl.clientIp + '-svn', processEl.filename);
+            _io.emit(processEl.clientIp + '-svn', "Committing files to SVN..");
+
+            var changelistCMD = ['changelist'];
+            changelistCMD.push('svnbot-' + processEl.clientIp);
+
+
+            processEl.files.forEach(function(f, i, files){
+                if(f.path) {
+                    changelistCMD.push(f.path);
+                }
+            });
+
+            var client;
+            try {
+                client = new Client({
+                    cwd: (_serverDirectory + '/server/lib/jf'),
+                    username: processEl.svn.username,
+                    password: processEl.svn.password,
+                    noAuthCache: true
+                });
+            } catch (er1){
+                _io.emit(processEl.clientIp + '-svn', 'SVN Error');
+                _io.emit(processEl.clientIp + '-svn', '<span style="color: #ea5965;">'+er1+'</span>');
+                doneCommit();
             }
-        });
-    };
-
-    console.log('writing.. '+ filename);
-};
-
-function commitFileToSvn(_filename,user, pass, message, app, res, success, failure){
-    var _taskXmlPath = util.getDirFromXMlName(_filename);
-
-    var javaFilePath = '/src/test/java/testcase/' + app + '/'+ 'Test_' + _filename + '.java';
-    var jsonFilePath = '/src/test/resources/taskJSON' + _taskXmlPath + '/' + _filename + '.json';
-    var xmlFilePath = '/src/test/resources/taskXML' + _taskXmlPath + '/' + _filename + '.xml';
 
             /**
-             * commiting files to svn
-             * todo: add to queue here & pop one by one
-             * todo: change this to commit files from stream to svn url
+             * Adding Files to Commit
              */
+            client.cmd(changelistCMD, function(err2, data) {
+                if(!err2){
+                    console.log(data)
+                    _io.emit(processEl.clientIp + '-svn', '<span>' +
+                    data +'</span>');
+                    var changelistCommitCMD = ['commit','--changelist',('svnbot-' + processEl.clientIp) ,
+                        ('-m\"SIMS-0000 '+ processEl.svn.message + '\"')]
 
-            var client = new Client({
-                cwd: (_serverDirectory + '/server/lib/jf'),
-                username: user, // optional if authentication not required or is already saved
-                password: pass, // optional if authentication not required or is already saved
-                noAuthCache: true // optional, if true, username does not become the logged in user on the machine
-            });
+                    /**
+                     * Committing files to SVN
+                     */
+                    client.cmd(changelistCommitCMD, function(err3, data) {
+                        if(err3) {
+                            console.log(err3);
+                            _io.emit(processEl.clientIp + '-svn', 'SVN Commit Error');
+                            _io.emit(processEl.clientIp + '-svn', '<span style="color: #ea5965;">' +
+                            err3 +'</span>');
+                            res.json(
+                                {
+                                    error: "true",
+                                    msg: "error in svn commit process"
+                                });
+                            doneCommit();
 
-
-
-    var otherCompleted = false;
-    var commiterr = false;
-    /**
-     * Commiting java
-     */
-    client.commit([('SIMS-0000: ' + message), (_serverDirectory + '/server/lib/jf' + javaFilePath)], function(err, data) {
-        if (data) {
-            _io.emit(tempClientIp + '-svn', '<span>' + (data).replace(/\r\n/g,'<br>') + '</span>');
-        }
-        if (err) {
-            client.add(_serverDirectory + '/server/lib/jf' + javaFilePath, function(err, data) {
-                if (err) {
-                    if(otherCompleted) {
-                        failure();
-                    } else {otherCompleted = true;commiterr=true;}
-                } else {
-                    client.commit([('SIMS-0000: ' + message), (_serverDirectory + '/server/lib/jf' + javaFilePath)], function(err, data) {
-                        if (data) {
-                            _io.emit(tempClientIp + '-svn', '<span>' + (data).replace(/\r\n/g, '<br>') + '</span>');
+                        } else {
+                            console.log(data);
+                            _io.emit(processEl.clientIp + '-svn', '<span>' +
+                            data +'</span>');
+                            res.json(
+                                {
+                                    error: "false",
+                                    msg: "SVN committ done server"
+                                });
+                            doneCommit();
                         }
-                        if (err) {
-                            if(otherCompleted) {
-                                failure();
-                            } else {otherCompleted = true;commiterr=true;}
-                        }
-                        if(otherCompleted && (!commiterr)) {
-                            success();
-                        } else if(otherCompleted && commiterr) {
-                            failure();
-                        } else {otherCompleted = true;}
                     });
+                } else {
+                    console.log(err2);
+                    _io.emit(processEl.clientIp + '-svn', 'SVN Error.');
+                    _io.emit(processEl.clientIp + '-svn', '<span style="color: #ea5965;">'+err2+'</span>');
+                    res.json(
+                        {
+                            error: "true",
+                            msg: "error in svn commit process"
+                        });
+                    doneCommit();
                 }
 
             });
-        } else {
-
-            if(otherCompleted && (!commiterr)) {
-                success();
-            } else if(otherCompleted && commiterr) {
-                failure();
-            } else {otherCompleted = true;}
         }
-
     });
 
     /**
-     * Commiting XML
+     * Helper Function - Update xpath config
+     * @param appName
+     * @param xpaths
+     * @param success
+     * @param failure
      */
-    client.commit([('SIMS-0000: ' + message), (_serverDirectory + '/server/lib/jf' + xmlFilePath)], function(err, data) {
-        if (data) {
-            _io.emit(tempClientIp + '-svn', '<span>' + (data).replace(/\r\n/g, '<br>') + '</span>');
-        }
-        if (err) {
-            client.add(_serverDirectory + '/server/lib/jf' + xmlFilePath, function(err, data) {
-                if (err) {
-                    if(otherCompleted) {
-                        failure();
-                    } else {otherCompleted = true;commiterr=true;}
-                } else {
-                    client.commit([('SIMS-0000: ' + message), (_serverDirectory + '/server/lib/jf' + xmlFilePath)], function(err, data) {
-                        if (data) {
-                            _io.emit(tempClientIp + '-svn', '<span>' + (data).replace(/\r\n/g, '<br>') + '</span>');
-                        }
-                        if (err) {
-                            if(otherCompleted) {
-                                failure();
-                            } else {otherCompleted = true;commiterr=true;}
-                        }
-                        if(otherCompleted && (!commiterr)) {
-                            success();
-                        } else if(otherCompleted && commiterr) {
-                            failure();
-                        } else {otherCompleted = true;}
-                    });
-                }
-            });
-        } else {
-            if(otherCompleted && (!commiterr)) {
-                success();
-            } else if(otherCompleted && commiterr) {
-                failure();
-            } else {otherCompleted = true;}
-        }
+    function loadAndUpdateApplicationXpathConfig(appName,xpaths, success, failure) {
 
-    });
-
-};
-
-function commitApplicationXpath(appName,xpaths, user, pass, message, success,failure){
-
-    var _configFileLocation = _serverDirectory+"/server/lib/jf/src/test/resources/config/"+ appName.toLowerCase().trim() + "_config.properties"
+        var _configFileLocation = _serverDirectory + "/server/lib/jf/src/test/resources/config/" +
+            appName.toLowerCase().trim() + "_config.properties";
 
         // load config file to memory
-    properties.parse (_configFileLocation, { path: true }, function (error, configObj){
+        properties.parse (_configFileLocation, { path: true }, function (error, configObj){
 
-        if (error) failure();
+            if (error) failure();
+            for(var i in xpaths) {
 
-        for(var i in xpaths) {
+                var _searchKey = xpaths[i].split(/=(.+)?/)[0];
+                var _keyValue = xpaths[i].split(/=(.+)?/)[1];
+                var _xpathKeys = Object.keys(configObj);
 
-            var _searchKey = xpaths[i].split(/=(.+)?/)[0];
-            var _keyValue = xpaths[i].split(/=(.+)?/)[1];
-
-            var _xpathKeys = Object.keys(configObj);
-
-            var iFound = false;
-            for (var key in _xpathKeys) {
-                //console.log(_searchKey.toString().trim());
-                //console.log(_xpathKeys[key].toString().trim());
-
-                if (_xpathKeys[key].toString().trim() === _searchKey.toString().trim()){
-
-                    iFound = true;
-                    console.log('updating xpath: ' + _searchKey + ' = ' + _xpathKeys[key]);
-                    configObj[_xpathKeys[key]] = _keyValue;
+                var iFound = false;
+                for (var key in _xpathKeys) {
+                    if (_xpathKeys[key].toString().trim() === _searchKey.toString().trim()){
+                        iFound = true;
+                        console.log('updating xpath: ' + _searchKey + ' = ' + _xpathKeys[key]);
+                        configObj[_xpathKeys[key]] = _keyValue;
+                    }
+                }
+                if(!iFound) {
+                    console.log('adding xpath: ' + _searchKey + ' = ' + _keyValue);
+                    var __temp = new String(_searchKey);
+                    configObj[__temp] = _keyValue;
                 }
             }
+            // updating content
+            var _configArray = [];
+            for (var key in configObj) {
+                var _temp = ((key == null ? "": key.trim()).replace(/ /g, "\\ ")) + ' = ' +
+                    ((configObj[key] == null ? "": configObj[key].trim()).replace(/ /g, "\\ "));
+                _configArray.push(_temp);
+            };
 
-            if(!iFound) {
-                console.log('adding xpath: ' + _searchKey + ' = ' + _keyValue);
-                var __temp = new String(_searchKey);
-                configObj[__temp] = _keyValue;
-            }
+            var updatedApplicationXpathConfig = {
+                path : _configFileLocation ,
+                data : _configArray.join("\n")
+            };
 
-        }
-        // updating content
-        var _configArray = [];
-        for (var key in configObj) {
-            var _temp = ((key == null ? "": key.trim()).replace(/ /g, "\\ ")) + ' = ' + ((configObj[key] == null ? "": configObj[key].trim()).replace(/ /g, "\\ "));
-            _configArray.push(_temp);
-        };
-
-        var configFileContent = _configArray.join("\n");
-
-        // write config file
-        fs.writeFile( _configFileLocation, configFileContent, function(error) {
-            if (error) {
-
-                err("write error:  " + error.message);
-                console.error("write error:  " + error.message);
-
-                failure();
-
-            } else {
-
-                // commit config
-                var client = new Client({
-                    cwd: (_serverDirectory + '/server/lib/jf'),
-                    username: user, // optional if authentication not required or is already saved
-                    password: pass, // optional if authentication not required or is already saved
-                    noAuthCache: true // optional, if true, username does not become the logged in user on the machine
-                });
-
-                client.commit([('SIMS-0000: ' + message), _configFileLocation], function(err, data) {
-                    if (data) {
-                        _io.emit(tempClientIp + '-svn', '<span>' + (data).replace(/\r\n/g, '<br>') + '</span>');
-                    }
-                    if (err) {
-                        client.add(_configFileLocation, function(err, data) {
-                            if (err) {
-                                failure();
-                            } else {
-                                client.commit([('SIMS-0000: ' + message), _configFileLocation], function(err, data) {
-                                    if (data) {
-                                        _io.emit(tempClientIp + '-svn', '<span>' + (data).replace(/\r\n/g, '<br>') + '</span>');
-                                    }
-                                    if (err) {
-                                        failure();
-                                    } else {
-                                        success();
-                                    }
-                                });
-                            }
-
-                        });
-                    } else {
-                        success();
-                    }
-                });
-            }
+            success(updatedApplicationXpathConfig);
         });
 
-    });
-
-};
-
-
-function commitJsonFile(_jsonFileLocation, jsonFileContent, user, pass, message, success, failure) {
-
-    var _direc = _jsonFileLocation.substring(0, _jsonFileLocation.lastIndexOf("/"));
-
-    if (!(fs.existsSync(_direc))){
-        console.log('creating dir.. '+ _direc);
-        mkdirp(_direc, function (err) {
-            if (err) console.error(err)
-            else {
-                processJsonCommit();
-            }
-        });
-    } else {
-        processJsonCommit();
-    }
-
-    function processJsonCommit(){
-        // write config file
-        fs.writeFile( _jsonFileLocation, jsonFileContent, function(error) {
-            if (error) {
-                console.error("write error:  " + error.message);
-
-                failure();
-
-            } else {
-
-                // commit config
-                var client = new Client({
-                    cwd: (_serverDirectory + '/server/lib/jf'),
-                    username: user, // optional if authentication not required or is already saved
-                    password: pass, // optional if authentication not required or is already saved
-                    noAuthCache: true // optional, if true, username does not become the logged in user on the machine
-                });
-
-                client.commit([('SIMS-0000: ' + message), _jsonFileLocation], function(err, data) {
-                    if (data) {
-                        _io.emit(tempClientIp + '-svn', '<span>' + (data).replace(/\r\n/g, '<br>') + '</span>');
-                    }
-                    if (err) {
-                        client.add(_jsonFileLocation, function(err, data) {
-                            if (err) {
-                                failure();
-                            } else {
-                                client.commit([('SIMS-0000: ' + message), _jsonFileLocation], function(err, data) {
-                                    if (data) {
-                                        _io.emit(tempClientIp + '-svn', '<span>' + (data).replace(/\r\n/g, '<br>') + '</span>');
-                                    }
-                                    if (err) {
-                                        failure();
-                                    } else {
-                                        success();
-                                    }
-                                });
-                            }
-
-                        });
-                    } else {
-                        success();
-                    }
-                });
-            }
-        });
     };
+
 };
+
+
 

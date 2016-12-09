@@ -32,7 +32,8 @@ exports.mapRunParams = function(req,currentTestId,done) {
 				}
 		},
 		"task": {
-			"filename": "GO16_WD_04_4A_01_A1",  // todo: corresponding update in post json in scriptor
+			"filename": "GO16_WD_04_4A_01_A1",
+			// todo: corresponding update in post json in scriptor
 			"appName" : "word",
 			"xml": "xml file content",
 			"java": "java file content",
@@ -52,7 +53,8 @@ exports.mapRunParams = function(req,currentTestId,done) {
         var runParams = [];
 
         runParams.push('mvn test');
-        runParams.push(('-DtestName='+req.task.appName.toLowerCase()+'.Test_'+req.task.filename)); // todo: check if filename require / contains any extension
+        runParams.push(('-DtestName='+req.task.appName.toLowerCase()+'.Test_'+req.task.filename));
+         // todo: check if filename require / contains any extension
         runParams.push(('-DbrName='+req.run.browser.name.toLowerCase()));
         runParams.push(('-Dos='+req.run.os));
 
@@ -100,9 +102,9 @@ exports.mapRunParams = function(req,currentTestId,done) {
          try {
              client = new Client({
                  cwd: (_serverDirectory + '/server/lib/jf'),
-                 username: req.svn.username, // optional if authentication not required or is already saved
-                 password: req.svn.password, // optional if authentication not required or is already saved
-                 noAuthCache: true // optional, if true, username does not become the logged in user on the machine
+                 username: req.svn.username,
+                 password: req.svn.password,
+                 noAuthCache: true
              });
          } catch (er1){
              _io.emit(req.user.ip + '-svn', 'Svn Error');
@@ -113,7 +115,7 @@ exports.mapRunParams = function(req,currentTestId,done) {
             client.cmd(['cleanup'], function(err, data) {
                 if (err) {
                     outRequest.error = true;
-                    _io.emit(req.user.ip + '-svn', 'Svn Cleanup Error');
+                    _io.emit(req.user.ip + '-svn', 'SVN Cleanup Error');
                     _io.emit(req.user.ip + '-svn', '<span style="color: #ea5965;">'+err+'</span>');
 
                     res.json(
@@ -125,22 +127,16 @@ exports.mapRunParams = function(req,currentTestId,done) {
                 } else {
 
                     _io.emit(req.user.ip + '-svn', data);
-/*
-                    _io.emit(req.user.ip + '-svn', 'Svn Cleanup..');
-                    console.log(outRequest);
-                    //return outRequest;
-                    done(outRequest);
-*/
 
-                    // todo: remove svn update from here and add alternate - > might conflict / overwrite running tests
+                    // todo: remove svn update from here and add alternate - >
+                    // might conflict / overwrite running tests
                     client.update(function(err, data) {
                         if(err){
                             outRequest.error = true;
-                            _io.emit(req.user.ip + '-svn', 'Svn Cleanup Error');
+                            _io.emit(req.user.ip + '-svn', 'SVN Cleanup Error');
                             _io.emit(req.user.ip + '-svn', '<span style="color: #ea5965;">'+err+'</span>');
                             console.log('svn update error');
                         }
-                        _io.emit(req.user.ip + '-svn', 'Svn Cleanup & Update..');
                         _io.emit(req.user.ip + '-svn', data);
                         console.log(outRequest);
                         done(outRequest);
