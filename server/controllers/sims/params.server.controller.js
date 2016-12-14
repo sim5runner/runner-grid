@@ -143,7 +143,7 @@ exports.mapRunParams = function(req,currentTestId,done) {
                     });
                 }
             });
-			
+
 	} else {
      _runningTests.push(CurrentTestDetails);
      console.log(_runningTests);
