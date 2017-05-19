@@ -8,7 +8,7 @@ var Client = require('svn-spawn');
 var Config = require('../../config/index')
 
 var request = require('request');
-
+var Beautify = require('../../utils/beautify');
 
 exports.mapRunParams = function(req,currentTestId,done) {
 
@@ -160,19 +160,23 @@ exports.mapRunParams = function(req,currentTestId,done) {
      console.log(_runningTests);
          console.log(outRequest.task.xml);
          if (outRequest.task.xml === 'null' || outRequest.task.java === 'null') {
-console.log('in 1');
+                console.log('getting script from ext server');
              var _sle = outRequest.task.filename.replace(/_/gi,".");
              // make a call to external service
              request((Config.api.script.java + _sle +'?format=java'), function (error, response, body) {
                  if (!error && response.statusCode == 200) {
-                     console.log(body)
-                     outRequest.task.java = body;
+                     //console.log(body);
+
+                     var javaContent = body.slice(1, -1);
+                     outRequest.task.java = Beautify.js_beautify(javaContent);
+
+                     console.log(outRequest.task.java);
 
                      request((Config.api.script.xml + _sle + '?format=xml'), function (error, response, body) {
                          if (!error && response.statusCode == 200) {
                              console.log(body)
                              outRequest.task.xml = body;
-console.log('done');
+                             console.log('done');
                              done(outRequest);
 
                          }
