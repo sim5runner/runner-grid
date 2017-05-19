@@ -60,7 +60,8 @@
 	"svn-spawn":"",
     "string.fromcodepoint":"",
     "properties":"",
-    "forever": "0.15.3"
+    "forever": "0.15.3",
+    "request":""
     },
   "engines": {
     "node" : "4.4.4"
