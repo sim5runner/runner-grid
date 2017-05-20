@@ -167,7 +167,8 @@ exports.mapRunParams = function(req,currentTestId,done) {
                  if (!error && response.statusCode == 200) {
                      //console.log(body);
 
-                     var javaContent = body.slice(1, -1);
+                     //var javaContent = body.slice(1, -1);
+                     var javaContent = body;
                      outRequest.task.java = Beautify.js_beautify(javaContent);
 
                      console.log(outRequest.task.java);
