@@ -7,8 +7,8 @@ var config= {
     },
     api:{
         script: {
-            java: "http://service-scriptor.herokuapp.com/api/scripts/task/",
-            xml: "http://service-scriptor.herokuapp.com/api/scripts/task/"
+            java: "http://localhost:4040/api/scripts/task/",
+            xml: "http://localhost:4040/api/scripts/task/"
         }
     }
 };
