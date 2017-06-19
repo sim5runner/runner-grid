@@ -5,6 +5,11 @@
 var util = require('../../utils');
 var Client = require('svn-spawn');
 
+var Config = require('../../config/index')
+
+var request = require('request');
+var Beautify = require('../../utils/beautify');
+
 exports.mapRunParams = function(req,currentTestId,done) {
 
     // todo: add validation on input json
@@ -71,6 +76,8 @@ exports.mapRunParams = function(req,currentTestId,done) {
 
         var command = runParams.join(" ");
         console.log('command: ' + command);
+
+    // get task script java and xml from external service
 
         var outRequest = {
             command :command,
@@ -151,7 +158,35 @@ exports.mapRunParams = function(req,currentTestId,done) {
 	} else {
      _runningTests.push(CurrentTestDetails);
      console.log(_runningTests);
-     done(outRequest);
+         console.log(outRequest.task.xml);
+         if (outRequest.task.xml === 'null' || outRequest.task.java === 'null') {
+                console.log('getting script from ext server');
+             var _sle = outRequest.task.filename.replace(/_/gi,".");
+             // make a call to external service
+             request((Config.api.script.java + _sle +'?format=java'), function (error, response, body) {
+                 if (!error && response.statusCode == 200) {
+                     //console.log(body);
+
+                     //var javaContent = body.slice(1, -1);
+                     var javaContent = body;
+                     outRequest.task.java = Beautify.js_beautify(javaContent);
+
+                     console.log(outRequest.task.java);
+
+                     request((Config.api.script.xml + _sle + '?format=xml'), function (error, response, body) {
+                         if (!error && response.statusCode == 200) {
+                             console.log(body)
+                             outRequest.task.xml = body;
+                             console.log('done');
+                             done(outRequest);
+
+                         }
+                     })
+
+                 }
+             })
+
+         } else { done(outRequest);}
 	}
 
 };
