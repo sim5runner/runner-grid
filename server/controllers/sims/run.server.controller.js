@@ -164,9 +164,9 @@ exports.runTask = function (req, res) {
 
                             var cmd = params.command;
 
-                            _io.emit(params.clientIp, JSON.stringify(req.body));
+                            //_io.emit(params.clientIp, JSON.stringify(req.body));
                             console.log('Client: '+params.clientIp);
-                            console.log('running command ' + cmd);
+                            console.log('Running command: ' + cmd);
 
                             _io.emit(params.clientIp, 'Running command ' + cmd);
 
@@ -191,11 +191,11 @@ exports.runTask = function (req, res) {
                             });
 
                             ls.on('exit', function (code) {
-                                console.log('run command exited with code ' + code);
+                                console.log('Run command exited with code: ' + code);
                             });
 
                             ls.on('close', function(code) {
-                                console.log('closing code: ' + code);
+                                console.log('Closing command with code: ' + code);
 
                                 function removeTestFromRunningList(arr) {
                                     var what, a = arguments, L = a.length, ax, i=0;

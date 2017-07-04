@@ -7,6 +7,7 @@
 // Get the router
 var apirouter = require('express').Router();
 var SIMS = require('../../controllers/sims/run.server.controller');
+var Results = require('../../controllers/sims/results.server.controller');
 
 // Middleware for all this apirouters requests
 apirouter.use(function timeLog(req, res, next) {
@@ -16,6 +17,11 @@ apirouter.use(function timeLog(req, res, next) {
 
 // add data: error on existing data key for user
 apirouter.post('/runtask', SIMS.runTask);
+
+// add data: error on existing data key for user
+apirouter.post('/skilltest/tasks/:taskId/test-status', Results.pushResults);
+
+apirouter.get('/skilltest/tasks/:taskId/test-status', Results.pushResults);
 
 module.exports = apirouter;
 
