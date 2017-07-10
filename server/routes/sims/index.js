@@ -19,9 +19,7 @@ apirouter.use(function timeLog(req, res, next) {
 apirouter.post('/runtask', SIMS.runTask);
 
 // add data: error on existing data key for user
-apirouter.post('/skilltest/tasks/:taskId/test-status', Results.pushResults);
-
-apirouter.get('/skilltest/tasks/:taskId/test-status', Results.pushResults);
+apirouter.post('/results', Results.pushResults);
 
 module.exports = apirouter;
 

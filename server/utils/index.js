@@ -170,6 +170,24 @@ function objectsAreSame(x, y) {
     return objectsAreSame;
 };
 
+function fillKeys(values) {
+    var that;
+    for (var i in values ){
+        if ( values.hasOwnProperty(i) ) {
+            if (values[i].key) {
+                var regex = new RegExp("['{']"+ values[i].key +"['}']","g");
+                that = this.replace(regex, values[i].value);
+            }
+        }
+    }
+    return that;
+}
+
+/*
+ String.prototype._format = fillKeys;
+ "test{e-e}e"._format([{key:'e-e', value:'e'}]);
+ */
+
 exports.portInUse = portInUse;
 exports.rmdirAsync = rmdirAsync;
 exports.mkdirParent = mkdirParent;
@@ -177,4 +195,6 @@ exports.getDirFromXMlName = getDirFromXMlName;
 exports.getServerIP = getServerIP;
 exports.getUUID = getUUID;
 exports.searchNodeInArray = searchNodeInArray;
+exports.fillKeys = fillKeys;
+
 
