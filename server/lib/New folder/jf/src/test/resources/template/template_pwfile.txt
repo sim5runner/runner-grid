@@ -1,0 +1,19 @@
+package sim5test.pathwayFiles.COMPONENT;
+
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeClass;
+
+import sim5test.SimsBase;
+import sim5.task.TaskItemMethod;
+
+public class CLASSNAME extends SimsBase {
+
+@BeforeClass(groups = {"Acceptance", "Mouse", "Keyboard", "Keyboard (2)"})
+public void openTask() throws Exception{
+	openBrowser();
+	openTask("FRIENDLYTASKID");
+}
+
+INVOKETASK
+
+}

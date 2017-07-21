@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task id="EXP16.AC.08.03.06" name="AC Step 8.3.6">
+    <description>AC Step 8.3.6: Examine the Text File Before Importing</description>
+    <friendlyTaskID>EXP16.AC.08.03.06.T1</friendlyTaskID>
+    <scenario name="T1">
+        <Items count="1">
+            <Item sno="1">
+                <Method group="NOT_FOUND" name="Right-Click" sno="1">
+                    <Actions>
+                        <Action sno="1">
+                            <actionType name="rightClick">
+                                <elementName>EXP16_AC_08_03_06_CSVFile</elementName>
+                            </actionType>
+                        </Action>
+                        <Action sno="2">
+                            <actionType name="clickAndWait">
+                                <elementName>RightClick_OpenWith</elementName>
+                            </actionType>
+                        </Action>
+                        <Action sno="3">
+                            <actionType name="clickAndWait">
+                                <elementName>RightClick_OpenWith_Notepad</elementName>
+                            </actionType>
+                        </Action>
+                    </Actions>
+                </Method>
+                <Method group="NOT_FOUND" name="Keyboard" sno="2">
+                    <Actions>
+                        <Action sno="1">
+                            <actionType name="pressKeyMultipleTimes">
+                                <keyName>ARROW_DOWN</keyName>
+                                <numOfTimes>8</numOfTimes>
+                            </actionType>
+                        </Action>
+                        <Action sno="2">
+                            <actionType name="waitFor"></actionType>
+                        </Action>
+                        <Action sno="3">
+                            <actionType name="pressKey">
+                                <keyName>SHIFT</keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="4">
+                            <actionType name="pressKey">
+                                <keyName>F10</keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="5">
+                            <actionType name="releaseKey">
+                                <keyName>SHIFT</keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="6">
+                            <actionType name="waitFor"></actionType>
+                        </Action>
+                        <Action sno="7">
+                            <actionType name="enterText">
+                                <text>H</text>
+                            </actionType>
+                        </Action>
+                        <Action sno="8">
+                            <actionType name="waitFor"></actionType>
+                        </Action>
+                        <Action sno="9">
+                            <actionType name="pressKey">
+                                <keyName>ARROW_DOWN</keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="10">
+                            <actionType name="waitFor"></actionType>
+                        </Action>
+                        <Action sno="11">
+                            <actionType name="pressKey">
+                                <keyName>ENTER</keyName>
+                            </actionType>
+                        </Action>
+                    </Actions>
+                </Method>
+                <Method group="NOT_FOUND" name="Ribbon" sno="3">
+                    <Actions>
+                        <Action sno="1">
+                            <actionType name="clickAndWait">
+                                <elementName>EXP16_AC_08_03_06_CSVFile</elementName>
+                            </actionType>
+                        </Action>
+                        <Action sno="2">
+                            <actionType name="clickAndWait">
+                                <elementName>Ribbon__Open__Open {dropdown-button}</elementName>
+                            </actionType>
+                        </Action>
+                        <Action sno="3">
+                            <actionType name="waitFor"></actionType>
+                        </Action>
+                        <Action sno="4">
+                            <actionType name="clickAndWait">
+                                <elementName>Ribbon__Open__Open__Notepad</elementName>
+                            </actionType>
+                        </Action>
+                    </Actions>
+                </Method>
+                <Method group="NOT_FOUND" name="Keyboard(2)" sno="4">
+                    <Actions>
+                        <Action sno="1">
+                            <actionType name="pressKeyMultipleTimes">
+                                <keyName>ARROW_DOWN</keyName>
+                                <numOfTimes>8</numOfTimes>
+                            </actionType>
+                        </Action>
+                        <Action sno="2">
+                            <actionType name="pressKey">
+                                <keyName>F10,H,PE</keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="3">
+                            <actionType name="pressKey">
+                                <keyName>ARROW_DOWN</keyName>
+                            </actionType>
+                        </Action>
+                        <Action sno="4">
+                            <actionType name="pressKey">
+                                <keyName>ENTER</keyName>
+                            </actionType>
+                        </Action>
+                    </Actions>
+                </Method>
+            </Item>
+        </Items>
+    </scenario>
+</Task>
