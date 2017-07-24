@@ -13,12 +13,12 @@ exports.pushResults = function (req, res) {
 
     String.prototype._format = util.fillKeys;
 
-    var taskId = req.body[0].taskid; // fixed in case of sims builder, only one task supported at a time.
+    var taskId = req.body.testclasses[0].taskid; // fixed in case of sims builder, only one task supported at a time.
 
     var url = ( config.builder.results.server +
     config.builder.results.api._format([{key:'task-id', value: taskId}]) );
 
-    var builderRequestBody = getResultForBuilder(req.body[0]);
+    var builderRequestBody = getResultForBuilder(req.body.testclasses[0]);
 
     // get request from req body
     // translate results
