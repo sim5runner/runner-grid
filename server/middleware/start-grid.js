@@ -12,7 +12,7 @@ module.exports = function(app, config) {
         if(returnValue === false) {
 
             //console.log('starting grid' + returnValue)
-            var cmd = "java -jar selenium-server-standalone-2.41.0.jar -role hub";
+            var cmd = "java -jar selenium-server-standalone-2.44.0.jar -role hub";
 
             var process = require('child_process');
             var ls;

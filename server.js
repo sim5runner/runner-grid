@@ -71,7 +71,7 @@ app.use(expressValidator());
 /**
  * Express WWW Server
  */
-let port = process.env.PORT || 9001;
+let port = process.env.PORT || 80;
 // Serve Bower Components based JS & CSS & Image assets
 app.use("/bower_components", express.static(__dirname + '/bower_components'));
 

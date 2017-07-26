@@ -1,0 +1,145 @@
+root( 
+    ribbon( 
+        tab-header, 
+        ribbon-section( 
+                    dropdown-item{title} ( 
+                                dropdown-item{title} ( 
+                                            dropdown-item{title} ( 
+                                                        dropdown-item{title} 
+                                                        ) 
+                                            ) 
+                                    ) 
+                    office-control ( 
+                                dropdown-item{title} ( 
+                                            dropdown-item{title} ( 
+                                                        dropdown-item{title}
+                                                        ) 
+                                                ) 
+                                    ) 
+                    gallery-button{title} ( 
+                                dropdown-item{title} ( 
+                                            dropdown-item{title} ( 
+                                                        dropdown-item{title} 
+                                                        ) 
+                                             ) 
+                                 ) 
+
+                        ),
+         title-bar 
+                ) 	
+    dialog ( 
+        tab-header, 
+        tab-page (
+                sims-CheckBox{title}, 
+                sims-button{title}, 
+                sims-RadioButton{title}, 
+                sims-Label{title} ( 	
+                        sims-CheckBox{title}, 	
+                        sims-button{title}, 	
+                        sims-RadioButton{title} 
+                            ) 
+                )	
+        sims-button{title}, 
+        legend{title} ( 
+                sims-CheckBox{title}, 
+                sims-button{title}, 
+                sims-RadioButton{title},  
+                sims-Label{title} ( 	
+                        sims-CheckBox{title}, 	
+                        sims-button{title}, 	
+                        sims-RadioButton{title} 
+                            ) 
+                ) 
+            ) 
+    pptdocarea(
+    		lorem-ipsum (
+    					lorem-ipsum
+    					)
+    ) 
+    worddocarea(
+    		lorem-ipsum (
+    					lorem-ipsum
+    					)
+    ) 
+    exceldocarea(
+    		lorem-ipsum (
+    					lorem-ipsum
+    					)
+    ) 
+    accessdocarea(
+    		lorem-ipsum (
+    					lorem-ipsum
+    					)
+    ) 
+    statusbar(
+    		statusBar{tooltiptext} (
+    					lorem-ipsum
+    					)
+    )
+    misc(
+		control(
+		   		control,
+		    		office,
+    				item,
+    				tab,
+		    		sims,
+				dropdown,
+    				button
+    				)
+    		office(
+		   		control,
+		    		office,
+    				item,
+    				tab,
+		    		sims,
+				dropdown,
+    				button
+    				)
+    		item(
+		   		control,
+		    		office,
+    				item,
+    				tab,
+		    		sims,
+				dropdown,
+    				button
+    				)
+    		tab(
+		   		control,
+		    		office,
+    				item,
+    				tab,
+		    		sims,
+				dropdown,
+    				button
+    				)
+    		sims(
+		   		control,
+		    		office,
+    				item,
+    				tab,
+		    		sims,
+				dropdown,
+    				button
+    				)
+    		dropdown(
+		   		control,
+		    		office,
+    				item,
+    				tab,
+		    		sims,
+				dropdown,
+    				button
+    				)
+    		button(
+		   		control,
+		    		office,
+    				item,
+    				tab,
+		    		sims,
+				dropdown,
+    				button
+    				)
+    		 
+    )
+)

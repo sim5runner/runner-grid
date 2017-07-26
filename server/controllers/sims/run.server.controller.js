@@ -84,7 +84,8 @@ exports.runTask = function (req, res) {
                                         /**
                                          * commit xpath config
                                          */
-                                        commitApplicationXpath(processEl.appName, processEl.xpaths, processEl.svn.username, processEl.svn.password, processEl.svn.message, function (done){
+                                        commitApplicationXpath(processEl.appName, processEl.xpaths, processEl.svn.username, processEl.svn.password, processEl.svn.message,
+                                            function (done){
                                                 console.log("Xpath committed successfully");
                                                 _io.emit(processEl.clientIp + '-svn', '<span style="color: #319db5;">Xpath committed successfully</span>');
 
@@ -119,7 +120,8 @@ exports.runTask = function (req, res) {
 
                                                 )
 
-                                            }, function(done){
+                                            },
+                                            function(done){
                                                 if(!commitQ.length) {processing = false;}
                                                 _io.emit(processEl.clientIp + '-svn', '<span style="color: #ea5965;">Error in Committing xpath config..</span>');
 
@@ -152,68 +154,82 @@ exports.runTask = function (req, res) {
                     }
                 }
                 else {
-                    /**
-                     * else run and return
-                     */
+                    // new code - write appl paths
 
-                    var cmd = params.command;
+                    writeApplicationXpath(params.task.appName,params.task.xpaths,
+                        function(){
+                            /**
+                             * else run and return
+                             */
 
-                    _io.emit(params.clientIp, JSON.stringify(req.body));
-                    console.log('Client: '+params.clientIp);
-                    console.log('running command ' + cmd);
+                            var cmd = params.command;
 
-                    _io.emit(params.clientIp, 'Running command ' + cmd);
+                            //_io.emit(params.clientIp, JSON.stringify(req.body));
+                            console.log('Client: '+params.clientIp);
+                            console.log('Running command: ' + cmd);
 
-                    var process = require('child_process');
-                    var ls;
+                            _io.emit(params.clientIp, 'Running command ' + cmd);
 
-                    var options = { cwd: (_serverDirectory+"/server/lib/jf"),
-                        env: process.env
-                    };
+                            var process = require('child_process');
+                            var ls;
 
-                    ls = process.spawn('cmd.exe', ['/c', cmd], options);
+                            var options = { cwd: (_serverDirectory+"/server/lib/jf"),
+                                env: process.env
+                            };
 
-                    ls.stdout.on('data', function(data){
-                        // todo: preserve logs
-                        _io.emit(params.clientIp, '<span style="color: black">' + util.ab2str(data) + '</span>');
-                        //console.log(util.ab2str(data));
-                    });
+                            ls = process.spawn('cmd.exe', ['/c', cmd], options);
 
-                    ls.stderr.on('data', function (data) {
-                        _io.emit(params.clientIp, '<span style="color: red">' + util.ab2str(data) + '</span>');
-                        //console.log(util.ab2str(data));
-                    });
+                            ls.stdout.on('data', function(data){
+                                // todo: preserve logs
+                                _io.emit(params.clientIp, '<span style="color: black">' + util.ab2str(data) + '</span>');
+                                //console.log(util.ab2str(data));
+                            });
 
-                    ls.on('exit', function (code) {
-                        console.log('run command exited with code ' + code);
-                    });
+                            ls.stderr.on('data', function (data) {
+                                _io.emit(params.clientIp, '<span style="color: red">' + util.ab2str(data) + '</span>');
+                                //console.log(util.ab2str(data));
+                            });
 
-                    ls.on('close', function(code) {
-                        console.log('closing code: ' + code);
+                            ls.on('exit', function (code) {
+                                console.log('Run command exited with code: ' + code);
+                            });
 
-                        function removeTestFromRunningList(arr) {
-                            var what, a = arguments, L = a.length, ax, i=0;
-                            while (L > 1 && arr.length) {
-                                what = a[--L];
-                                for (var i=arr.length-1; i>=0; i--) {
-                                    if(arr[i].id === what.id){
-                                        arr.splice(i, 1);
+                            ls.on('close', function(code) {
+                                console.log('Closing command with code: ' + code);
+
+                                function removeTestFromRunningList(arr) {
+                                    var what, a = arguments, L = a.length, ax, i=0;
+                                    while (L > 1 && arr.length) {
+                                        what = a[--L];
+                                        for (var i=arr.length-1; i>=0; i--) {
+                                            if(arr[i].id === what.id){
+                                                arr.splice(i, 1);
+                                            }
+                                        }
                                     }
+                                    return arr;
+                                };
+
+                                removeTestFromRunningList(_runningTests, {id:currentTestId});
+
+                            });
+
+                            res.json(
+                                {
+                                    status:"success",
+                                    message:"Script execution triggered on runner server"
                                 }
-                            }
-                            return arr;
-                        };
+                            );
+                        },
+                        function(){
+                            res.json(
+                                {
+                                    status:"failed",
+                                    message:"Error in writing application xpaths"
+                                }
+                            );
 
-                        removeTestFromRunningList(_runningTests, {id:currentTestId});
-
-                    });
-
-                    res.json(
-                        {
-                            error:"false",
-                            msg:"Script execution triggered on runner server"
-                        }
-                    );
+                        })
 
                 }
 
@@ -223,8 +239,8 @@ exports.runTask = function (req, res) {
                 _io.emit(params.clientIp, '<span style="color: red">' + er + '</span>');
                 res.json(
                     {
-                        error:"true",
-                        msg:"Error in script execution on runner server"
+                        status:"failed",
+                        message:"Error in script execution on runner server"
                     }
                 );
             }
@@ -492,6 +508,73 @@ function commitApplicationXpath(appName,xpaths, user, pass, message, success,fai
                         success();
                     }
                 });
+            }
+        });
+
+    });
+
+};
+
+/**
+ New fn: write application xpaths
+ */
+
+function writeApplicationXpath(appName,xpaths,success,failure){
+
+    var _configFileLocation = _serverDirectory+"/server/lib/jf/src/test/resources/config/"+ appName.toLowerCase().trim() + "_config.properties"
+
+    // load config file to memory
+    properties.parse (_configFileLocation, { path: true }, function (error, configObj){
+
+        if (error) failure();
+
+        for(var i in xpaths) {
+
+            var _searchKey = xpaths[i].split(/=(.+)?/)[0];
+            var _keyValue = xpaths[i].split(/=(.+)?/)[1];
+
+            var _xpathKeys = Object.keys(configObj);
+
+            var iFound = false;
+            for (var key in _xpathKeys) {
+                //console.log(_searchKey.toString().trim());
+                //console.log(_xpathKeys[key].toString().trim());
+
+                if (_xpathKeys[key].toString().trim() === _searchKey.toString().trim()){
+
+                    iFound = true;
+                    console.log('updating xpath: ' + _searchKey + ' = ' + _xpathKeys[key]);
+                    configObj[_xpathKeys[key]] = _keyValue;
+                }
+            }
+
+            if(!iFound) {
+                console.log('adding xpath: ' + _searchKey + ' = ' + _keyValue);
+                var __temp = new String(_searchKey);
+                configObj[__temp] = _keyValue;
+            }
+
+        }
+        // updating content
+        var _configArray = [];
+        for (var key in configObj) {
+            var _temp = ((key == null ? "": key.trim()).replace(/ /g, "\\ ")) + ' = ' + ((configObj[key] == null ? "": configObj[key].trim()).replace(/ /g, "\\ "));
+            _configArray.push(_temp);
+        };
+
+        var configFileContent = _configArray.join("\n");
+
+        // write config file
+        fs.writeFile( _configFileLocation, configFileContent, function(error) {
+            if (error) {
+
+                err("write error:  " + error.message);
+                console.error("write error:  " + error.message);
+
+                failure();
+
+            } else {
+                success();
             }
         });
 

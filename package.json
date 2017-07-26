@@ -17,7 +17,7 @@
     "compression": "^1.5.2",
     "cookie-parser": "^1.4.1",
     "crypto": "0.0.3",
-	"del": "^2.0.2",
+    "del": "^2.0.2",
     "mongoose": "~4.1.0",
     "express": "^4.9.8",
     "express-handlebars": "^2.0.1",
@@ -54,15 +54,13 @@
     "wiredep": "~2.2.0",
     "wrench": "~1.5.8",
     "jshint-stylish": "~1.0.0",
-    "socket.io": "",
-    "mkdirp":"",
-    "downloadjs":"",
-	"svn-spawn":"",
-    "string.fromcodepoint":"",
-    "properties":"",
-    "forever": "0.15.3"
-    },
-  "engines": {
-    "node" : "4.4.4"
+    "socket.io": "1.4.8",
+    "mkdirp":"0.5.1",
+    "downloadjs":"1.4.6",
+    "svn-spawn":"0.1.5",
+    "string.fromcodepoint":"0.2.1",
+    "properties":"1.2.1",
+    "forever": "0.15.3",
+    "request":"2.81.0"
   }
 }
